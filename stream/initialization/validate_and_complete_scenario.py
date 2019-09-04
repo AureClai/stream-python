@@ -212,14 +212,18 @@ def complete_links(Links, Nodes, Traffic):
         #...
         # Partie Calage
         # Change les valeurs en fonction de ce qui est mis dans le Scenario
+        # Si on ne cale pas la vitesse on garde celel du FD
         if Links[link]["Speed"]==None:
             Links[link]["Speed"] = Links[link]["FD"]["u"]
-            
+        
+        # Si on ne cale pas la capacité on garde celel du FD
         if  Links[link]["Capacity"]==None:
             Links[link]["Capacity"] = Links[link]["FD"]["C"]*Links[link]["NumLanes"]
-            
+        
+        # Si on ne cale pas la priorité, on garde sur le nombre de voies
         if Links[link]["Priority"]==None:
             Links[link]["Priority"]=Links[link]["NumLanes"]
+
         # Modifie le FD en fonction du calage
         Links = update_link_DF(Links, link)
 #        if not("LFD" in Links[link].keys()) or not("values" in Links[link]["LFD"].keys()):

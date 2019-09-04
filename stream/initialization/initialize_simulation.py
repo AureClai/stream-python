@@ -2,7 +2,7 @@
 import copy
 import numpy as np
 
-
+from .validate_and_complete_scenario import update_link_DF
 
 def initialize_simulation(Simulation):#, User):
     '''Main function'''
@@ -124,7 +124,12 @@ def initialize_regulations(Simulation):
                 newLinkID = max(list(Simulation["Links"]))+1
                 newLink = copy.deepcopy(Simulation["Links"][managedLaneLink])
                 newLink["NumLanes"] = 1
-                newLink["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
+                if "Capacity" in list(Regulation['Args'].keys()):
+                    newLink["Capacity"] = Regulation['Args']['Capacity']
+                    update_link_DF(Simulation["Links"], newLinkID)
+                else:
+                    newLink["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
+
                 Simulation["Links"].update({newLinkID : newLink}) #
                 # ...
                 # Modify the existing link
@@ -133,12 +138,20 @@ def initialize_regulations(Simulation):
                 LaneProbability = [ratio1,1-ratio1]
                 LaneProbabilities = [LaneProbability for vehclass in list(Simulation['VehicleClass'])]
 
+                # Capacity
+                if "Capacity" in list(Regulation['Args'].keys()):
+                    cap = NumLanes*Simulation["Links"][managedLaneLink]["FD"]["C"] - Regulation['Args']['Capacity']
+                else:
+                    cap = (NumLanes-1)*Simulation["Links"][managedLaneLink]["FD"]["C"]
+
                 Simulation["Links"][managedLaneLink].update({
                                                     'AssociatedLink' : newLinkID,
                                                     'LaneProbabilities' : LaneProbabilities,
                                                     'NumLanes' : (NumLanes-1),
-                                                    'Capacity' : (NumLanes-1)*Simulation["Links"][managedLaneLink]["FD"]["C"]
+                                                    'Capacity' : cap
                                                     })
+                update_link_DF(Simulation["Links"], managedLaneLink)
+
                 # ...
                 # Modify the nodes
                 nodeup = Simulation["Links"][managedLaneLink]["NodeUpID"]
@@ -234,3 +247,5 @@ def sortActionsByTime(Actions):
         newActions.append(Actions[sortedIndexes[i]])
     Actions = newActions
     return Actions
+
+
