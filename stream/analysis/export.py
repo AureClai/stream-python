@@ -54,7 +54,7 @@ def export_flow_speed_on_links( Simulation, filePath ):
         res = np.vstack((res, link_infos))
         
     #export csv
-    np.savetxt(os.path.join(filePath,"travel_times.csv"), res, fmt='%s',  delimiter = ";")
+    np.savetxt(os.path.join(filePath,"speed_flow.csv"), res, fmt='%s',  delimiter = ";")
     return
 
 def export_travel_times_on_links(Simulation, filePath):

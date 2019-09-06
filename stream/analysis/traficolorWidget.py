@@ -69,16 +69,22 @@ def getPointsProjection(Simulation, diagsXT):
         
     return (diagsXT, lims)
 
-def plotTraficolorOnAx(column, diagsXT, ax):
+def plotTraficolorOnAx(column, diagsXT, ax, drawMain):
     XLIM = ax.get_xlim()
     YLIM = ax.get_ylim()
 #    column -= 1
     ax.clear()
     t = diagsXT[list(diagsXT.keys())[0]]["T"][0,column]
     for link in list(diagsXT):
-        print(link)
-        Vs = diagsXT[link]["V"][:,column]/diagsXT[link]["FD"]["u"]
-        lc = colorline(diagsXT[link]["Xp"], diagsXT[link]["Yp"], Vs, cmap=custom_cmap, ax = ax)
+        if not "hasSub" in list(diagsXT[link]):
+            Vs = diagsXT[link]["V"][:,column]/diagsXT[link]["FD"]["u"]
+            lc = colorline(diagsXT[link]["Xp"], diagsXT[link]["Yp"], Vs, cmap=custom_cmap, ax = ax)
+        else:
+            hasSub = diagsXT[link]["hasSub"]
+            isMain = diagsXT[link]["isMain"]
+            if (not hasSub and isMain) or not(hasSub or isMain or drawMain) or (hasSub and isMain and drawMain):
+                Vs = diagsXT[link]["V"][:,column]/diagsXT[link]["FD"]["u"]
+                lc = colorline(diagsXT[link]["Xp"], diagsXT[link]["Yp"], Vs, cmap=custom_cmap, ax = ax)
     ax.set_aspect('equal')
     ax.axis('off')
     ax.set_title("Traficolor time = " + convertSecondsTohhmmss(t), color='k')
@@ -118,7 +124,10 @@ class TraficolorWidget(QMainWindow, FORM_CLASS):
         
         self.mplWidget = MplWidget(self)
         self.mplWidget.setGeometry(9,39,941,571)
-
+        
+        #...
+        # draw alternate links instead of mains ?
+        self.drawMain = True
         
         #...
         # Toolbar
@@ -142,17 +151,19 @@ class TraficolorWidget(QMainWindow, FORM_CLASS):
         self.time_slider.setSingleStep(1)
         self.time_slider.setPageStep(0)
         self.time_slider.setValue(0)
-        # signal
-        self.time_slider.valueChanged.connect(self.timeChanged)
         
+        #...
+        # signals
+        self.time_slider.valueChanged.connect(self.timeChanged)
+        self.alt_check.stateChanged.connect(self.altCheckCallback)
 
         
         self.tbegin.setText(convertSecondsTohhmmss(tBegin))
         self.tend.setText(convertSecondsTohhmmss(tEnd))
         
         self.initLimits()
-        self.timeChanged()
-        
+        self.altCheckCallback()
+    
         self.show()
 #    def update_graph(self):
 #
@@ -176,13 +187,17 @@ class TraficolorWidget(QMainWindow, FORM_CLASS):
 #        print(convertSecondsTohhmmss(self.tRange[self.time_slider.value()]))
 #        print(self.time_slider.value())
 #        print(self.mplWidget.canvas.axes)
-        plotTraficolorOnAx(self.time_slider.value(), self.diagsXT, self.mplWidget.canvas.axes)
+        plotTraficolorOnAx(self.time_slider.value(), self.diagsXT, self.mplWidget.canvas.axes, self.drawMain)
         self.mplWidget.canvas.draw()
         self.update()
         
     def initLimits(self):
         self.mplWidget.canvas.axes.set_xlim(self.lims['xlim'])
         self.mplWidget.canvas.axes.set_ylim(self.lims['ylim'])
+        
+    def altCheckCallback(self):
+        self.drawMain = not self.alt_check.isChecked()
+        self.timeChanged()
         
 
 #fileSimu, _ = QFileDialog.getOpenFileName(None, "Sélectionner un fichier de simulation", "", "Fichier Numpy (*.npy)")

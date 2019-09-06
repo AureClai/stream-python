@@ -16,6 +16,20 @@ import sys
 #...
 # Functions
 #...
+def getWhoHasSub(Simulation):
+    hasSubLinks = []
+    for link in list(Simulation["Links"]):
+        if Simulation["Links"][link]["AssociatedLink"]!=None:
+            hasSubLinks.append(link)
+    return hasSubLinks
+
+def getWhoIsSub(Simulation):
+    isSubLinks = []
+    for link in list(Simulation["Links"]):
+        if Simulation["Links"][link]["AssociatedLink"]!=None:
+            isSubLinks.append(Simulation["Links"][link]["AssociatedLink"])
+    return isSubLinks
+
 def calcCVCInter(CVCin, CVCout, x, L, u, w, kx):
     """
     Function to calculate the internal CVC on a link at position x
@@ -157,8 +171,17 @@ def calcXTOnAllLinks(Simulation, dx, dt):
     #...
     # init
     diagsXT = {}
+    hasSubLinks = getWhoHasSub(Simulation)
+    isSubLinks = getWhoIsSub(Simulation)
     for link in Simulation["Links"]:
         print(link)
+        #...
+        hasSub = False
+        isMain = True
+        if link in hasSubLinks:
+            hasSub = True
+        if link in isSubLinks:
+            isMain = False
         #...
         cellsT, cellsX, cellsQ, cellsK, cellsV, FD = calcXTOnLink(Simulation, link, dt, dx)
         diagsXT.update({link : {"X" : cellsX,
@@ -167,7 +190,9 @@ def calcXTOnAllLinks(Simulation, dx, dt):
                                "K" : cellsK,
                                "V" : cellsV,
                                "FD" : FD,
-                               "Length" : Simulation["Links"][link]["Length"]}})
+                               "Length" : Simulation["Links"][link]["Length"],
+                               "hasSub" : hasSub,
+                               "isMain" : isMain}})
     return diagsXT
 
 #...
@@ -181,7 +206,6 @@ def calcXTOnPath(Simulation, path, dx, dt):
     diagsXT = {}
     for link in path:
         print(link)
-        #...
         cellsT, cellsX, cellsQ, cellsK, cellsV, FD = calcXTOnLink(Simulation, link, dt, dx)
         diagsXT.update({link : {"X" : cellsX,
                                "T" : cellsT,
