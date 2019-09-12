@@ -124,13 +124,13 @@ def initialize_regulations(Simulation):
                 newLinkID = max(list(Simulation["Links"]))+1
                 newLink = copy.deepcopy(Simulation["Links"][managedLaneLink])
                 newLink["NumLanes"] = 1
+                Simulation["Links"].update({newLinkID : newLink}) #
                 if "Capacity" in list(Regulation['Args'].keys()):
                     newLink["Capacity"] = Regulation['Args']['Capacity']
                     update_link_DF(Simulation["Links"], newLinkID)
                 else:
-                    newLink["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
+                    Simulation["Links"][newLinkID]["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
 
-                Simulation["Links"].update({newLinkID : newLink}) #
                 # ...
                 # Modify the existing link
                 NumLanes = Simulation["Links"][managedLaneLink]['NumLanes']
