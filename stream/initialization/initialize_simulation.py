@@ -90,7 +90,7 @@ def initial_arrivals(Entries, Events, vehArray):
             Events[entry]["Arrivals"][0]["Time"] = subArray[:,2]
             Events[entry]["Arrivals"][0]["VehID"] = subArray[:,0]
             Events[entry]["Arrivals"][0]["IsExit"] = np.zeros(subArray.shape[0])
-            Events[entry]["Arrivals"][0]["NextLinkID"] = np.zeros(subArray.shape[0])
+            Events[entry]["Arrivals"][0]["NextLinkID"] = subArray[:,3] # np.zeros(subArray.shape[0])
         # ...
     return Events
 
@@ -182,7 +182,7 @@ def initialize_actions(Simulation):
     # Display times
     step_time = Simulation["General"]["TimesStepByDefault"] # sec
     display_times = np.arange( Simulation["General"]["SimulationDuration"][0], Simulation["General"]["SimulationDuration"][1] + 2 * step_time, step_time )
-    display_times = display_times - (Simulation["General"]["SimulationDuration"][0] // step_time)
+    display_times = display_times - (Simulation["General"]["SimulationDuration"][0] % step_time)
     for disp_time in display_times:
         # ...
         Action = {}
@@ -247,5 +247,3 @@ def sortActionsByTime(Actions):
         newActions.append(Actions[sortedIndexes[i]])
     Actions = newActions
     return Actions
-
-

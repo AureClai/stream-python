@@ -22,10 +22,11 @@ def assignment(Simulation, When = 'initialization'):
     # ---- Vehicle Assignment
     Simulation["Vehicles"], Simulation["tmp"]["vehArray"] = first_vehicle_assignment(  Simulation["Routes"],
                                                         Simulation["Demand"],
-                                                        Simulation["Periods"])
+                                                        Simulation["Periods"],
+                                                        Simulation["Nodes"])
     return (Simulation)
 
-def first_vehicle_assignment(Routes, Demand, Periods):
+def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
     # init of array of route id - entryid - exitid
     routeArray = np.array([[routeID , Routes[routeID]["EntryID"], Routes[routeID]["ExitID"]] for routeID in list(Routes.keys())])
 
@@ -63,6 +64,7 @@ def first_vehicle_assignment(Routes, Demand, Periods):
                 # Security condition
                 if len(routeLine)!=0:
                     routeID = routeArray[routeLine,0][0]
+                    nextLinkID = np.where( Nodes[entry]["OutgoingLinksID"] == Routes[routeID]["Path"][0] )[0][0]
                     vehicle.update({
                                     "EntryID": int(entry),
                                     "ExitID" : int(line[1]),
@@ -75,7 +77,7 @@ def first_vehicle_assignment(Routes, Demand, Periods):
                                     "CurrentNode": -1,
                                     "RealPath" : []
                                     })
-                    vehArray.append([int(currID), int(entry), currTime])
+                    vehArray.append([int(currID), int(entry), currTime, nextLinkID])
                     Vehicles.update({currID : vehicle})
                     currID += 1
                 else:
@@ -92,13 +94,14 @@ def validation_of_demand(demandArray, Routes):
     for entryID in np.unique(demandArray[:,2]):
         for exitID in np.unique(demandArray[:,3]):
             if len(findLineCorrespondingToInOut(routeArray[:,[1,2]], entryID, exitID))==0:
-                # The route does not exist
-                print("Warning : no path between entry " + str(entryID) + " and exit " + str(exitID))
-                print("Every flow between these two extrems are set to zero...")
                 demandLines = findLineCorrespondingToInOut(demandArray[:,[2,3]], entryID, exitID)
-                # set the demand Lines to 0
-                if len(demandLines)!=0:
-                    demandArray[demandLines, 4] = 0
+                if np.sum(demandArray[demandLines, 4]) != 0:
+                    # The route does not exist and there is a non null demand
+                    print("Warning : no path between entry " + str(entryID) + " and exit " + str(exitID))
+                    print("Every flow between these two extrems are set to zero...")
+                    # set the demand Lines to 0
+                    if len(demandLines)!=0:
+                        demandArray[demandLines, 4] = 0
     return demandArray
 
 ##############################################################################

@@ -212,18 +212,14 @@ def complete_links(Links, Nodes, Traffic):
         #...
         # Partie Calage
         # Change les valeurs en fonction de ce qui est mis dans le Scenario
-        # Si on ne cale pas la vitesse on garde celel du FD
         if Links[link]["Speed"]==None:
             Links[link]["Speed"] = Links[link]["FD"]["u"]
-        
-        # Si on ne cale pas la capacité on garde celel du FD
+            
         if  Links[link]["Capacity"]==None:
             Links[link]["Capacity"] = Links[link]["FD"]["C"]*Links[link]["NumLanes"]
-        
-        # Si on ne cale pas la priorité, on garde sur le nombre de voies
+            
         if Links[link]["Priority"]==None:
             Links[link]["Priority"]=Links[link]["NumLanes"]
-
         # Modifie le FD en fonction du calage
         Links = update_link_DF(Links, link)
 #        if not("LFD" in Links[link].keys()) or not("values" in Links[link]["LFD"].keys()):
@@ -520,37 +516,45 @@ def complete_exits(Nodes, Exits, General):
 #        print("The routes used are defined by the user only : possible bug...")
 #    return
 
-def validation(Links, Nodes, Entries, Exits):
+def validation(Links, Nodes, Entries, Exits, warning="print"):
 
     # Validation of network connection
     for link in list(Links.keys()):
         if not("NumLanes" in Links[link].keys()):
-            sys.exit("The number of lanes for link " + str(link) +  "must be defined.")
+            if warning=="print": print("The number of lanes for link " + str(link) +  "must be defined.")
+            else: sys.exit("The number of lanes for link " + str(link) +  "must be defined.")
         if not("NodeDownID" in Links[link].keys()):
-            sys.exit("The link " + str(link) + " is not connected with any downstream node.")
+            if warning=="print": print("The link " + str(link) + " is not connected with any downstream node.")
+            else: sys.exit("The link " + str(link) + " is not connected with any downstream node.")
         if not("NodeUpID" in Links[link].keys()):
-            sys.exit("The link " + str(link) + " is not connected with any upstream node.")
-
+            if warning=="print": print("The link " + str(link) + " is not connected with any upstream node.")
+            else: sys.exit("The link " + str(link) + " is not connected with any upstream node.")
+    # ...
     # Validation of specific nodes
     for node in list(Nodes.keys()):
         # An entry nodes must have 0 upstream link and 1 link downstream
         if Nodes[node]["Type"] == 1:
             if Nodes[node]["IncomingLinksID"]:
-                sys.exit("The node " + str(node) + " is an entry node : it cannot have an upstream link.")
+                if warning=="print": print("The node " + str(node) + " is an entry node : it cannot have an upstream link.")
+                else: sys.exit("The node " + str(node) + " is an entry node : it cannot have an upstream link.")
             if len(Nodes[node]["OutgoingLinksID"])>1:
-                sys.exit("The node " + str(node) + " is an entry node : it cannot have more than one downstream link.")
+                if warning=="print": print("The node " + str(node) + " is an entry node : it cannot have more than one downstream link.")
+                else: sys.exit("The node " + str(node) + " is an entry node : it cannot have more than one downstream link.")
 
         # An exit node must have 1 upstream link and 0 downstream link
         elif Nodes[node]["Type"] == 2:
             if Nodes[node]["OutgoingLinksID"]:
-                sys.exit("The node " + str(node) + " is an exit node : it cannot have a downstream link.")
+                if warning=="print": print("The node " + str(node) + " is an exit node : it cannot have a downstream link.")
+                else: sys.exit("The node " + str(node) + " is an exit node : it cannot have a downstream link.")
             if len(Nodes[node]["IncomingLinksID"])>1:
-                sys.exit("The node " + str(node) + " is an exit node : it cannot have more than one upstream link.")
+                if warning=="print": print("The node " + str(node) + " is an exit node : it cannot have more than one upstream link.")
+                else: sys.exit("The node " + str(node) + " is an exit node : it cannot have more than one upstream link.")
 
         # Merge and diverge
         if len(Nodes[node]["IncomingLinksID"])>1:
             if len(Nodes[node]["AlphaOD"]) != len(Nodes[node]["IncomingLinksID"]) + 1:
-                sys.exit("The node " + str(node) + " AlphaOD is uncorrectly defined")
+                if warning=="print": print("The node " + str(node) + " AlphaOD is uncorrectly defined")
+                else: sys.exit("The node " + str(node) + " AlphaOD is uncorrectly defined")
 
         # traffic light...
 

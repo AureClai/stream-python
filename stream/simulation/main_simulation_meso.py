@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 
-def main_simulation_meso(S,T):
+def main_simulation_meso( S, T, disp='time' ):
 # S is the dict containing all the information about the simulation
 # nProcess is the number of the calculated process
 # T is the instant of end of the simulation
@@ -29,7 +29,7 @@ def main_simulation_meso(S,T):
         else:
             # gérer l'action
             # (modifier liste action, next action)
-            ListActions, NextAction = tackle_action(S, ListActions, NextAction)
+            ListActions, NextAction = tackle_action(S, ListActions, NextAction, disp=disp)
         
         
     return S
@@ -64,12 +64,17 @@ def compute_next_action(Actions, ListActions=None, NextAction=None):
 
 
 
-def tackle_action(S, ListActions, NextAction):
+def tackle_action(S, ListActions, NextAction, disp='time'):
     # ...
     # we deals with actions
     # ...
     if NextAction['Type'] == 'display_time_simulation':
-        print( 'Time in simulation : ' + str(int(NextAction['Time'])) + ' sec' )
+        if disp == 'time':
+            print( 'Time in simulation : ' + str(int(NextAction['Time'])) + ' sec' )
+        elif disp == '%':
+            progress = max(0, 100 * (NextAction['Time'] - S['General']['SimulationDuration'][0]) /\
+                                    (S['General']['SimulationDuration'][1] - S['General']['SimulationDuration'][0]) )
+            print('%%%'+str(progress))
         
     # ...
     if NextAction['Type'] == 'managed_lane_activation':
@@ -378,7 +383,7 @@ def select_next_event(Nodes, NodeID, General, NextArrivals, NextPassageTime, Nex
 
 
 def execute_and_update_event(Links, Exits, Nodes, General, Vehicles, VehicleClass, Events, NextEvents):
-
+    
     # ---- (0) Initialisation
     NodeID = NextEvents["Node"]
     current_time = NextEvents["Time"]
