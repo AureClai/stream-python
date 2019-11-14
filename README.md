@@ -32,3 +32,12 @@ Voir partie contact.
 License
 ------
 La license de Stream est [Cecill-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html).
+
+TODO
+------
+
+1. Implémentation des carrafours à feux
+2. Prise en compte de débit variables en sortie
+3. Différents modules d'affectation
+4. Régulation dynamique des vitesses
+5. Régulation d'accès
