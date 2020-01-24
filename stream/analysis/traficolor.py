@@ -174,7 +174,7 @@ def makeAnimation(Simulation=None, diagsXT = None,fps = 60, repeat = True, dx = 
 if __name__ == '__main__':
         
     # load the xtdiags info
-    Simulation = np.load('simulation.npy').item(0)
+    Simulation = np.load('simulation.npy', allow_pickle=True).item(0)
         
     #... 
     # setup animation

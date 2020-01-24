@@ -224,7 +224,7 @@ if __name__ == '__main__':
         name = config[1]
         dx = int(config[2])
         dt = int(config[3])
-        Simulation = np.load(file).item(0)
+        Simulation = np.load(file, allow_pickle=True).item(0)
         diagsXT =  calcXTOnAllLinks(Simulation, dx,dt)
         dirPath = os.path.dirname(file)
         namepath = os.path.join(dirPath, name)

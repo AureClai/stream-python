@@ -512,7 +512,7 @@ if __name__=='__main__':
     plt.close("all")
 
     # loading a Simulation.npy
-    Simulation = np.load('Donnees/simulation.npy').item(0)
+    Simulation = np.load('Donnees/simulation.npy', allow_pickle=True).item(0)
 
     # computation of all the travel times on links of network
     TravelTimes = compute_travel_times_on_links( Simulation )

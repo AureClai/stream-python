@@ -123,7 +123,7 @@ if __name__=='__main__':
     plt.close("all")
 
     # loading a Simulation.npy
-    Simulation = np.load('../simulation.npy').item(0)
+    Simulation = np.load('../simulation.npy', allow_pickle=True).item(0)
     Statistics = san.compute_stats_on_links( Simulation, StepTime=60 )
     
     plot_calibration_results(Statistics, Data, 'Flows')

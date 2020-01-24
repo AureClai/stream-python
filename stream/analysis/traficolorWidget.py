@@ -133,8 +133,8 @@ class TraficolorWidget(QMainWindow, FORM_CLASS):
         # Toolbar
         self.addToolBar(NavigationToolbar(self.mplWidget.canvas, self))
         
-        self.Simulation = np.load(self.fileSimu).item(0)
-        self.diagsXT = np.load(self.fileXT).item(0)
+        self.Simulation = np.load(self.fileSimu, allow_pickle=True).item(0)
+        self.diagsXT = np.load(self.fileXT, allow_pickle=True).item(0)
         self.diagsXT, self.lims = getPointsProjection(self.Simulation, self.diagsXT)
         
         #...

@@ -1,43 +1,75 @@
-Stream - Simulateur de trafic mésoscopique événementiel
-======
-Qu'est ce que Stream
-------
-Stream est un outil de simulation mésoscopique du trafic routier, c'est-à-dire un outil dont le niveau de résolution est intermédiaire aux niveaux microscopique et macroscopique. Il considère également des véhicules plutôt qu'un flux, mais se contente de calculer les dates de passage des véhicules aux noeuds du réseau routier, plutôt que de calculer toutes ses positions à pas de temps fixe.
-Les avantages de cette méthode de résolution sont (i) les temps de calculs amoindris par rapport au microscopique, (ii) un nombre réduit de paramètres au sens physique clair facilitant la démarche de paramétrage de l'outil par rapport au microscopique, (iii) une grande diversité de cas d'usage bien moins restrictifs que le macroscopique.
+# Stream - Mesoscopic event-based open-source traffic simulator
 
-Où l'obtenir
-------
-(A venir sur le GitHub du CEREMA)
+## What is **Stream** ?
 
-Contact
-------
+Here is just a fork from an original project from CEREMA.
+Read the description (FR) in the original repo : https://gitlab.cerema.fr
+
+## Main Features
+
+1. Scenario reading from `.npy` file
+2. Shortest path affectation
+3. Mesoscopic event-based Simulation
+4. Managed lane regulation implementation
+
+## Contact
+
 aurelien.clairais@cerema.fr
 
-Installation
-------
-Copier le contenu du dossier dans un dossier **LOCAL**.
-Le chemin d'accès au dossier ne doit pas posséder d'espaces.
-**Ex:**
-    C://Users/nom.utilisateur/Mes Documents/Stream : **NON**
-    C://Users/nom.utilisateur/Stream : **OUI**
+## Installation
 
-Utilisation
-------
-Pour le moment Stream s'utilise exclusivement avec **QStream** son plugi QGIS.
+Stream works well with [Anaconda](https://www.anaconda.com/distribution/) for Python 3.7.
+With Anaconda, the use of [virtual environnments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended :
 
-Bugs
-------
-Voir partie contact.
+```
+$ conda create --name myenv
+$ conda activate myenv
+```
 
-License
-------
-La license de Stream est [Cecill-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html).
+```console
+$ git clone https://github.com/AureClai/stream-python
+$ cd stream-python
+$ pip install .
+```
 
-TODO
-------
+## Use
 
-1. Implémentation des carrafours à feux
-2. Prise en compte de débit variables en sortie
-3. Différents modules d'affectation
-4. Régulation dynamique des vitesses
-5. Régulation d'accès
+For this version : **test only with the provided examples** in `example`directory.
+
+```
+$ cd path_to_example_directory/
+$ python -m stream inputs.npy
+```
+
+From now, a new directory `result` has been created with the result of the simulation with date and time.
+To launch the analysis of the newly acquired results :
+
+```console
+$ python analysis_example.py path_to_the_results_npy_file
+```
+
+The program create an output `.npy` simulation file.
+
+### Use QStream for better experience (**Windows Only**)
+
+The QGIS plugin at https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) provides :
+
+- Scenario definition
+- Analysis features
+
+## Bugs
+
+???
+
+## License
+
+[Cecill-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html).
+
+## TODO
+
+1. Implement `bokeh`-based dashboard for result analysis
+2. Variable flows at exits
+3. Moddable affectation module
+4. Dynamical Speed Regulation
+5. On-ramp regulation
+6. Other format for I/O (JSON, XML, etc...)
