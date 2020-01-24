@@ -3,7 +3,7 @@
 ## What is **Stream** ?
 
 Here is just a fork from an original project from CEREMA.
-Read the description (FR) in the original repo : https://gitlab.cerema.fr
+Read the description (FR) in the original repo : https://gitlab.cerema.fr/Stream/stream-python
 
 ## Main Features
 
@@ -14,7 +14,7 @@ Read the description (FR) in the original repo : https://gitlab.cerema.fr
 
 ## Contact
 
-aurelien.clairais@cerema.fr/Stream/stream-python
+aurelien.clairais@cerema.fr
 
 ## Installation
 
