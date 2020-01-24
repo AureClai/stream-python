@@ -14,7 +14,7 @@ Read the description (FR) in the original repo : https://gitlab.cerema.fr
 
 ## Contact
 
-aurelien.clairais@cerema.fr
+aurelien.clairais@cerema.fr/Stream/stream-python
 
 ## Installation
 
