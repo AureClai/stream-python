@@ -3,6 +3,7 @@ import random
 
 
 def main_simulation_meso( S, T, disp='time' ):
+    print("Original simulation loop...")
 # S is the dict containing all the information about the simulation
 # nProcess is the number of the calculated process
 # T is the instant of end of the simulation
