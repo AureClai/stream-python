@@ -4,6 +4,8 @@ import numpy as np
 ###### Main function
 def validate_and_complete_scenario(Inputs, User = []):
 
+    print("Original validation of the scenario...")
+
     Inputs = change_parameters_by_user(Inputs, User)
     Inputs = add_missing_variables(Inputs)
 

@@ -6,18 +6,33 @@ import numpy as np
 from .initialization.validate_and_complete_scenario import validate_and_complete_scenario
 from .initialization.assignment import assignment
 from .initialization.initialize_simulation import initialize_simulation
+from .initialization.importation import import_scenario_from_npy
 from .simulation.main_simulation_meso import main_simulation_meso
 
 
-def runSimulation(filename, saveS=True):
-    print("Running simulation for " + filename)
-    Inputs = np.load(filename, allow_pickle=True).item(0)
-    #
-    S = validate_and_complete_scenario(Inputs)
-    S = assignment(S)
-    S = initialize_simulation(S)
+def get_stream_base_process():
+    Process = {
+        'import': import_scenario_from_npy,
+        'validate_and_complete': validate_and_complete_scenario,
+        'assignment': assignment,
+        'initialize': initialize_simulation,
+        'run': main_simulation_meso
+    }
+    return Process
 
-    S = main_simulation_meso(S, S["General"]["SimulationDuration"][1])
+
+def run_simulation(filename, custom_process=None, saveS=True):
+    # if a custom process has been set, use it
+    if not custom_process:
+        Process = get_stream_base_process()
+    else:
+        Process = custom_process
+
+    S = Process['import'](filename)
+    S = Process['validate_and_complete'](S)
+    S = Process['assignment'](S)
+    S = Process['initialize'](S)
+    S = Process['run'](S, S["General"]["SimulationDuration"][1])
     # Saving
     if saveS:
         __saveAsNpy(filename, S)
@@ -51,7 +66,7 @@ def main(args):
                 exists = os.path.isfile(arg)
                 if exists:
                     try:
-                        runSimulation(arg)
+                        run_simulation(arg)
                     except Exception as e:
                         print(e)
                         input('ERROR')
