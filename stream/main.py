@@ -39,6 +39,20 @@ def run_simulation(filename, custom_process=None, saveS=True):
     return S
 
 
+def run_simulation_from_inputs(Inputs, custom_process=None):
+    # if a custom process has been set, use it
+    if not custom_process:
+        Process = get_stream_base_process()
+    else:
+        Process = custom_process
+
+    S = Process['validate_and_complete'](Inputs)
+    S = Process['assignment'](S)
+    S = Process['initialize'](S)
+    S = Process['run'](S, S["General"]["SimulationDuration"][1])
+    return S
+
+
 def __saveAsNpy(filename, S):
     directory = os.path.join(os.path.dirname(
         os.path.abspath(filename)), "results")
