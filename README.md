@@ -59,7 +59,7 @@ The QGIS plugin at https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) pr
 
 ## Bugs
 
-???
+No known bugs. Please write an issue if you see anything.
 
 ## License
 
