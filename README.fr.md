@@ -1,4 +1,8 @@
-# Stream - Mesoscopic event-based open-source traffic simulator
+<p align="center">
+  <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
+</p>
+
+<h1 align="center">Simulateur de trafic mésoscopique événementiel open-source</h1>
 
 Ce dossier est basé sur un _fork_ d'un projet du [Cerema](https://cerema.fr)
 https://gitlab.cerema.fr/Stream/stream-python
