@@ -3,7 +3,7 @@
 This repository is based on a fork from a project from the [Cerema](https://cerema.fr).
 https://gitlab.cerema.fr/Stream/stream-python
 
-_Read this in other languages:_ _[Ensglish](https://github.com/tiimgreen/github-cheat-sheet/blob/master/README.md)_, _[French](https://github.com/tiimgreen/github-cheat-sheet/blob/master/README.fr.md)_
+_Read this in other languages:_ _[Ensglish](https://github.com/AureClai/stream-python/blob/master/README.md)_, _[French](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
 
 ## Table of Contents
 
