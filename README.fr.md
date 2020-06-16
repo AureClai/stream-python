@@ -1,3 +1,5 @@
+[![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/FaradayRF/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
+
 <p align="center">
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
