@@ -1,9 +1,27 @@
 # Stream - Mesoscopic event-based open-source traffic simulator
 
-## What is **Stream** ?
+This repository is based on a fork from a project from the [Cerema](https://cerema.fr).
+https://gitlab.cerema.fr/Stream/stream-python
 
-Here is just a fork from an original project from CEREMA.
-Read the description (FR) in the original repo : https://gitlab.cerema.fr/Stream/stream-python
+_Read this in other languages:_ _[Ensglish](https://github.com/tiimgreen/github-cheat-sheet/blob/master/README.md)_, _[French](https://github.com/tiimgreen/github-cheat-sheet/blob/master/README.fr.md)_
+
+## Table of Contents
+
+- [What is Stream ?](#what-is-stream)
+- [Main features](#main-features)
+- [Contact](#contact)
+- [Installation](#installation)
+- [Use](#use)
+  - [Use in command line](#use-in-command-line)
+  - [Use in scripts](#use-in-scripts)
+  - [Use QStream for scenario design](#use-qstream-for-scenario-design)
+- [Bugs](#bugs)
+- [License](#license)
+- [TODO](#todo)
+
+## What is Stream ?
+
+Stream is mesoscopic road traffic simulation tool, that is that the scale of resolution is an intermediary to the microscopic and macroscopic scales. It processes vehicles instead of flows. It only calculates the passing times of the vehicles at the nodes of the network instead of calculating every position with a fixed time step. The pros of this method of resolution are that (i) the calculatation times are less than with a microscopic resolution, (ii) a smaller number of parameters with a clear physical sens easing the calibration of the model compared to the microscopic, (iii) a great diversity of applications with less restrictions than the macroscopic resolution.
 
 ## Main Features
 
@@ -26,6 +44,8 @@ $ conda create --name myenv
 $ conda activate myenv
 ```
 
+The installation is made via clonning the directory followed by an installation with `pip` :
+
 ```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
@@ -34,6 +54,8 @@ $ pip install .
 
 ## Use
 
+### Use in command line
+
 For this version : **test only with the provided examples** in `example`directory.
 
 ```
@@ -41,16 +63,17 @@ $ cd path_to_example_directory/
 $ python -m stream inputs.npy
 ```
 
-From now, a new directory `result` has been created with the result of the simulation with date and time.
-To launch the analysis of the newly acquired results :
+From now, a new directory `result` has been created with the result of the simulation with date and time with the `.npy` extension.
 
-```console
-$ python analysis_example.py path_to_the_results_npy_file
-```
+### Use in scripts
 
-The program create an output `.npy` simulation file.
+Import the functions and use it (see source code and/or documentation).
 
-### Use QStream for better experience (**Windows Only**)
+TODO : write the documentation for use in scripts
+
+### Use QStream for scenario design
+
+(**Windows Only**)
 
 The QGIS plugin at https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) provides :
 
@@ -72,4 +95,4 @@ No known bugs. Please write an issue if you see anything.
 3. Moddable affectation module
 4. Dynamical Speed Regulation
 5. On-ramp regulation
-6. Other format for I/O (JSON, XML, etc...)
+6. Other format for in and out (JSON, XML, etc...)
