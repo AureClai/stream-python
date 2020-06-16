@@ -1,3 +1,4 @@
+https://gitter.im/stream-python/community
 <p align="center">
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
