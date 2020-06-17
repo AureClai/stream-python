@@ -9,7 +9,7 @@
 Ce dossier est basé sur un _fork_ d'un projet du [Cerema](https://cerema.fr)
 https://gitlab.cerema.fr/Stream/stream-python
 
-_Read this in other languages:_ _[Ensglish](https://github.com/AureClai/stream-python/blob/master/README.md)_, _[French](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
+_Read this in other languages:_ _[English](https://github.com/AureClai/stream-python/blob/master/README.md)_, _[French](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
 
 ## Sommaire
 
