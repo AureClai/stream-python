@@ -1,8 +1,10 @@
 import sys
 import numpy as np
 
-###### Main function
-def validate_and_complete_scenario(Inputs, User = []):
+# Main function
+
+
+def validate_and_complete_scenario(Inputs, User=[]):
 
     print("Original validation of the scenario...")
 
@@ -12,28 +14,38 @@ def validate_and_complete_scenario(Inputs, User = []):
     Inputs["tmp"] = {}
 
     Inputs["General"] = complete_general(Inputs["General"])
-    Inputs["Traffic"], Inputs["VehicleClass"] = complete_by_default_traffic(Inputs["Traffic"], Inputs["VehicleClass"])
+    Inputs["Traffic"], Inputs["VehicleClass"] = complete_by_default_traffic(
+        Inputs["Traffic"], Inputs["VehicleClass"])
 
-    Inputs["Links"] = complete_links(Inputs["Links"], Inputs["Nodes"], Inputs["Traffic"])
-    Inputs["Nodes"] = complete_nodes(Inputs["Links"], Inputs["Nodes"], Inputs["Traffic"])
+    Inputs["Links"] = complete_links(
+        Inputs["Links"], Inputs["Nodes"], Inputs["Traffic"])
+    Inputs["Nodes"] = complete_nodes(
+        Inputs["Links"], Inputs["Nodes"], Inputs["Traffic"])
     # Inputs["Signals"] = complete_nodes(Inputs["Signals"], Inputs["General"])
-    Inputs["Exits"] = complete_exits(Inputs["Nodes"], Inputs["Exits"], Inputs["General"])
+    Inputs["Exits"] = complete_exits(
+        Inputs["Nodes"], Inputs["Exits"], Inputs["General"])
     #Inputs["Entries"] = complete_entries(Inputs["Nodes"], Inputs["Links"], Inputs["Entries"], Inputs["Exits"], Inputs["VehicleClass"])
     #Inputs["Routes"] = complete_routes(Inputs["Routes"])
+    if 'Signals' in Inputs.keys():
+        Inputs['Signals'][0] = {}
+    else:
+        Inputs['Signals'] = {0: {}}
 
-    # Assignment
-    # Regulations
-    validation(Inputs["Links"], Inputs["Nodes"], Inputs["Entries"], Inputs["Exits"])
+        # Assignment
+        # Regulations
+    validation(Inputs["Links"], Inputs["Nodes"],
+               Inputs["Entries"], Inputs["Exits"])
 
-     # signal & assignement
+    # signal & assignement
     return Inputs
 
 ##############################################################################
-##### Functions
+# Functions
 
-def change_parameters_by_user(Inputs, User = []):
 
-    if len(User)!=0 and ("ChangeParameters" in User["Simulation"].keys()):
+def change_parameters_by_user(Inputs, User=[]):
+
+    if len(User) != 0 and ("ChangeParameters" in User["Simulation"].keys()):
         NumberModifications = len(User["Simulation"]["ChangeParameters"])
         for modif in range(NumberModifications):
             STRING = User["Simulation"]["ChangeParameters"][modif]
@@ -42,50 +54,52 @@ def change_parameters_by_user(Inputs, User = []):
                 print("Modifying : " + STRING)
     return Inputs
 
-def add_missing_variables (Inputs):
+
+def add_missing_variables(Inputs):
 
     if not("Links" in Inputs.keys()):
-        Inputs.update({"Links" : {}})
+        Inputs.update({"Links": {}})
 
     if not("Nodes" in Inputs.keys()):
-        Inputs.update({"Nodes" : {}})
+        Inputs.update({"Nodes": {}})
 
     if not("Signals" in Inputs.keys()):
-        Inputs.update({"Signals" : {}})
+        Inputs.update({"Signals": {}})
 
     if not("Sensors" in Inputs.keys()):
-        Inputs.update({"Sensors" : {}})
+        Inputs.update({"Sensors": {}})
 
     if not("General" in Inputs.keys()):
-        Inputs.update({"General" : {}})
+        Inputs.update({"General": {}})
 
     if not("Traffic" in Inputs.keys()):
-        Inputs.update({"Traffic" : {}})
+        Inputs.update({"Traffic": {}})
 
     if not("VehicleClass" in Inputs.keys()):
-        Inputs.update({"VehicleClass" : {}})
+        Inputs.update({"VehicleClass": {}})
 
     if not("Entries" in Inputs.keys()):
-        Inputs.update({"Entries" : {}})
+        Inputs.update({"Entries": {}})
 
     if not("Exits" in Inputs.keys()):
-        Inputs.update({"Exits" : {}})
+        Inputs.update({"Exits": {}})
 
     if not("Assignment" in Inputs.keys()):
-        Inputs.update({"Assignment" : {}})
+        Inputs.update({"Assignment": {}})
 
     if not("Routes" in Inputs.keys()):
-        Inputs.update({"Routes" : {}})
+        Inputs.update({"Routes": {}})
 
     if not("Regulations" in Inputs.keys()):
-        Inputs.update({"Regulations" : {}})
+        Inputs.update({"Regulations": {}})
 
     if not("Assimilation" in Inputs.keys()):
-        Inputs.update({"Assimilation" : {}})
+        Inputs.update({"Assimilation": {}})
 
     return Inputs
 
-def complete_general( General = {} ):
+
+def complete_general(General={}):
     if not(General):
         General["SimulationDuration"] = [0, 60]
         General["SimulationModel"] = 'MesoLWR'
@@ -103,8 +117,9 @@ def complete_general( General = {} ):
     else:
         if not("SimulationDuration" in General.keys()):
             General["SimulationDuration"] = [0, 60]
-        elif len(General["SimulationDuration"])==1:
-            General["SimulationDuration"] = [0, General["SimulationDuration"][0]]
+        elif len(General["SimulationDuration"]) == 1:
+            General["SimulationDuration"] = [
+                0, General["SimulationDuration"][0]]
         if not("SimulationModel" in General.keys()):
             General["SimulationModel"] = "MesoLWR"
         if not("Peloton" in General.keys()):
@@ -132,7 +147,8 @@ def complete_general( General = {} ):
 
     return General
 
-def complete_by_default_traffic(Traffic = {}, VehicleClass={}):
+
+def complete_by_default_traffic(Traffic={}, VehicleClass={}):
     if not(Traffic):
         # Fundamental diagram by lane
         FD = {}
@@ -191,11 +207,11 @@ def complete_by_default_traffic(Traffic = {}, VehicleClass={}):
         VehicleClass[i] = vclass
 #    else:
 #        for iveh in list(VehicleClass.keys()):
-##            if not("Name" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Name"]):
+# if not("Name" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Name"]):
 ##                VehicleClass[iveh]["Name"] = "VL"
-##            if not("Speed" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Speed"]):
+# if not("Speed" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Speed"]):
 ##                VehicleClass[iveh]["Speed"] = 36
-##            if not("Length" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Length"]):
+# if not("Length" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Length"]):
 ##                VehicleClass[iveh]["Length"] = 5
 #            if not("Color" in VehicleClass[iveh].keys()) or not(VehicleClass[iveh]["Color"]):
 #                VehicleClass[iveh]["Color"] = [0,0,0.8]
@@ -203,6 +219,8 @@ def complete_by_default_traffic(Traffic = {}, VehicleClass={}):
     return (Traffic, VehicleClass)
 
 # Problem with links
+
+
 def complete_links(Links, Nodes, Traffic):
 
     for link in list(Links.keys()):
@@ -211,17 +229,18 @@ def complete_links(Links, Nodes, Traffic):
         if not("FD" in Links[link].keys()):
             Links[link]["FD"] = Traffic["FD"]
             print('ATTENTION !!! PAS DE FD ???')
-        #...
+        # ...
         # Partie Calage
         # Change les valeurs en fonction de ce qui est mis dans le Scenario
-        if Links[link]["Speed"]==None:
+        if Links[link]["Speed"] == None:
             Links[link]["Speed"] = Links[link]["FD"]["u"]
-            
-        if  Links[link]["Capacity"]==None:
-            Links[link]["Capacity"] = Links[link]["FD"]["C"]*Links[link]["NumLanes"]
-            
-        if Links[link]["Priority"]==None:
-            Links[link]["Priority"]=Links[link]["NumLanes"]
+
+        if Links[link]["Capacity"] == None:
+            Links[link]["Capacity"] = Links[link]["FD"]["C"] * \
+                Links[link]["NumLanes"]
+
+        if Links[link]["Priority"] == None:
+            Links[link]["Priority"] = Links[link]["NumLanes"]
         # Modifie le FD en fonction du calage
         Links = update_link_DF(Links, link)
 #        if not("LFD" in Links[link].keys()) or not("values" in Links[link]["LFD"].keys()):
@@ -237,28 +256,29 @@ def complete_links(Links, Nodes, Traffic):
 #            Links[link]["LFD"] = LFD
 #        elif type(Links[link]["LFD"]["values"])==int:
 #            Links[link]["LFD"]["values"] = [Links[link]["LFD"]["values"]]
-##        elif len(Links[link]["LFD"]["values"]) != Links[link]["NumLanes"]:
+# elif len(Links[link]["LFD"]["values"]) != Links[link]["NumLanes"]:
 ##            Message = "Warning! The number of lanes for link " + str(link) + " is different from the number of specified LFDs on this link."
 ##            raise BaseException(Message)
         if not("Length" in Links[link].keys()):
-            Temp_List_X = np.array(Links[link]["Points"][0,:])
-            Temp_List_Y = np.array(Links[link]["Points"][1,:])
+            Temp_List_X = np.array(Links[link]["Points"][0, :])
+            Temp_List_Y = np.array(Links[link]["Points"][1, :])
             Temp_L = 0
             for j in range(len(Temp_List_X)-1):
-                Temp_L = Temp_L + np.sqrt( (Temp_List_X[j+1] - Temp_List_X[j])**2 +  (Temp_List_Y[j+1] - Temp_List_Y[j])**2)
+                Temp_L = Temp_L + \
+                    np.sqrt((Temp_List_X[j+1] - Temp_List_X[j]) **
+                            2 + (Temp_List_Y[j+1] - Temp_List_Y[j])**2)
             Links[link]["Length"] = Temp_L
         if not("MeanTravelTime" in Links[link].keys()):
-            Links[link]["MeanTravelTime"] = Links[link]["Length"]/Links[link]["Speed"]
+            Links[link]["MeanTravelTime"] = Links[link]["Length"] / \
+                Links[link]["Speed"]
         if not("NodeUpID" in Links[link].keys()):
             Links[link]["NodeUpID"] = []
         if not("NodeDownID" in Links[link].keys()):
             Links[link]["NodeDownID"] = []
-        #...
+        # ...
         # Partie régulation
         if not("AssociatedLink" in Links[link].keys()):
             Links[link]["AssociatedLink"] = None
-
-
 
     for node in list(Nodes.keys()):
         # ----
@@ -269,7 +289,7 @@ def complete_links(Links, Nodes, Traffic):
 
     return Links
 
-#def update_link_capacite(Links, i):
+# def update_link_capacite(Links, i):
 #    NumLanes = Links[i]["NumLanes"]
 #    try:
 #        Tmp_Link_LFD = Links[i]["LFD"]["values"]
@@ -297,16 +317,17 @@ def complete_links(Links, Nodes, Traffic):
 #
 #    return Capacity
 
+
 def update_link_DF(Links, i):
     FD = Links[i]["FD"]
     u = Links[i]['Speed']
     kx = FD['kx']
     C = Links[i]['Capacity']/Links[i]["NumLanes"]
-    
-    FD.update({'u' : u, 'C': C, 'w' : C / (kx - C/u)})
-    Links[i]["FD"].update({"FD" : FD})
+
+    FD.update({'u': u, 'C': C, 'w': C / (kx - C/u)})
+    Links[i]["FD"].update({"FD": FD})
     return Links
-    
+
 
 def complete_nodes(Links, Nodes, Traffic):
 
@@ -335,7 +356,8 @@ def complete_nodes(Links, Nodes, Traffic):
         if not("LaneAllocation" in Nodes[node].keys()):
             Nodes[node]["LaneAllocation"] = []
         if not("CapacityDrop" in Nodes[node].keys()):
-            Nodes[node]["CapacityDrop"] = np.zeros( Nodes[node]["NumIncomingLinks"]+1 )
+            Nodes[node]["CapacityDrop"] = np.zeros(
+                Nodes[node]["NumIncomingLinks"]+1)
         if not("TransitTime" in Nodes[node].keys()):
             Nodes[node]["TransitTime"] = 0
         if not("CapacityForced" in Nodes[node].keys()):
@@ -345,7 +367,7 @@ def complete_nodes(Links, Nodes, Traffic):
         # (a) Type
         if not("Type" in Nodes[node].keys()):
             if len(Nodes[node]["IncomingLinksID"]) == 0:
-                Nodes[node]["Type"] = 1 #Entry
+                Nodes[node]["Type"] = 1  # Entry
             elif len(Nodes[node]["OutgoingLinksID"]) == 0:
                 Nodes[node]["Type"] = 2
             else:
@@ -353,20 +375,25 @@ def complete_nodes(Links, Nodes, Traffic):
 
         # (b) NumIncomingLinks
         if not("NumIncomingLinks" in Nodes[node].keys()):
-            Nodes[node]["NumIncomingLinks"] = len(Nodes[node]["IncomingLinksID"])
+            Nodes[node]["NumIncomingLinks"] = len(
+                Nodes[node]["IncomingLinksID"])
 
         # (c) NumOutgoingLinks
         if not("NumOutgoingLinks" in Nodes[node].keys()):
-            Nodes[node]["NumOutgoingLinks"] = len(Nodes[node]["OutgoingLinksID"])
+            Nodes[node]["NumOutgoingLinks"] = len(
+                Nodes[node]["OutgoingLinksID"])
 
         # (d) AlphaOD
-        Nodes[node].update({"AlphaOD" : np.array([])})
-        if Nodes[node]["NumIncomingLinks"] >= 1: # this is a merge
-            NumIncomingLanes = [Links[link]["Priority"] for link in Nodes[node]["IncomingLinksID"]]
-            if sum(NumIncomingLanes)==0:
-                NumIncomingLanes = [Links[link]["NumLanes"] for link in Nodes[node]["IncomingLinksID"]]
+        Nodes[node].update({"AlphaOD": np.array([])})
+        if Nodes[node]["NumIncomingLinks"] >= 1:  # this is a merge
+            NumIncomingLanes = [Links[link]["Priority"]
+                                for link in Nodes[node]["IncomingLinksID"]]
+            if sum(NumIncomingLanes) == 0:
+                NumIncomingLanes = [Links[link]["NumLanes"]
+                                    for link in Nodes[node]["IncomingLinksID"]]
             moyenne = 1/sum(NumIncomingLanes) * np.array(NumIncomingLanes)
-            Nodes[node].update({"AlphaOD" : np.hstack((moyenne, np.array([0])))})
+            Nodes[node].update(
+                {"AlphaOD": np.hstack((moyenne, np.array([0])))})
             # if Nodes[node]["AlphaOD"].shape[0] > 1:
             #     Nodes[node]["AlphaOD"] = Nodes[node]["AlphaOD"][0,:]
 
@@ -376,61 +403,73 @@ def complete_nodes(Links, Nodes, Traffic):
         #     Nodes[node]["AlphaOD"] = np.vstack([Nodes[node]["AlphaOD"], np.zeros([1,Nodes[node]["AlphaOD"].shape[1]])])
 
         # (e) SignalID ---
+        if not('SignalsID' in Nodes[node].keys()):
+            Node[node]['SignalsID'] = [0 for i in range(
+                Nodes[node]['NumncomingLinks'] + 1)]
+        if len(Nodes[node]['SignalsID']) != Nodes[node]['NumIncomingLinks'] + 1:
+            Nodes[node]['SignalsID'].append(0)
 
-        # (f) FIFO ---
+            # (f) FIFO ---
         if not("FIFO" in Nodes[node].keys()):
-            Nodes[node].update({"FIFO" : Traffic["FIFO"]})
-            Nodes[node].update({"LaneAllocation" : []})
+            Nodes[node].update({"FIFO": Traffic["FIFO"]})
+            Nodes[node].update({"LaneAllocation": []})
         elif Nodes[node]["FIFO"] == 1:
-            Nodes[node].update({"LaneAllocation" : []})
+            Nodes[node].update({"LaneAllocation": []})
         else:
-            if Nodes[node]["Type"] == 1 or Nodes[node]["Type"]== 2:
-                Nodes[node].update({"LaneAllocation" : []})
+            if Nodes[node]["Type"] == 1 or Nodes[node]["Type"] == 2:
+                Nodes[node].update({"LaneAllocation": []})
             else:
-                DownstreamLanes = [Links[link]["NumLanes"] for link in Nodes[node]["OutgoingLinksID"]]
-                UpstreamLane = Links[Nodes[node]["IncomingLinksID"][0]]["NumLanes"]
-                if not(sum(Nodes[node]["LaneAllocation"])== UpstreamLane):
+                DownstreamLanes = [Links[link]["NumLanes"]
+                                   for link in Nodes[node]["OutgoingLinksID"]]
+                UpstreamLane = Links[Nodes[node]
+                                     ["IncomingLinksID"][0]]["NumLanes"]
+                if not(sum(Nodes[node]["LaneAllocation"]) == UpstreamLane):
                     # The lane allocation is not correct
-                    LaneRatio = np.array(DownstreamLanes) / sum(DownstreamLanes)
+                    LaneRatio = np.array(DownstreamLanes) / \
+                        sum(DownstreamLanes)
                     LaneAllocation = np.round(LaneRatio * UpstreamLane)
                     if sum(LaneAllocation) > UpstreamLane:
                         LaneAllocation[0] = LaneAllocation[0] - 1
                     elif sum(LaneAllocation) < UpstreamLane:
                         LaneAllocation[0] = LaneAllocation[0] + 1
-                    Nodes[node]["LaneAllocation"] = LaneAllocation #by default
+                    Nodes[node]["LaneAllocation"] = LaneAllocation  # by default
 
         # (g) Capacity Drop ---
-        if type(Nodes[node]["CapacityDrop"]) == str and Nodes[node]["CapacityDrop"]=='auto':
-            InCapacites = np.array([Links[link]["Capacite"] for link in Nodes[node]["IncomingLinksID"]])/np.array([Links[link]["Capacite"] for link in Nodes[node]["NumLanes"]])
-            Nodes[node]["CapacityDrop"] = 1 - InCapacites / max(InCapacites);
+        if type(Nodes[node]["CapacityDrop"]) == str and Nodes[node]["CapacityDrop"] == 'auto':
+            InCapacites = np.array([Links[link]["Capacite"] for link in Nodes[node]["IncomingLinksID"]]) / \
+                np.array([Links[link]["Capacite"]
+                          for link in Nodes[node]["NumLanes"]])
+            Nodes[node]["CapacityDrop"] = 1 - InCapacites / max(InCapacites)
         elif len(Nodes[node]["CapacityDrop"]) < Nodes[node]["NumIncomingLinks"]:
             Drop = np.max(Nodes[node]["CapacityDrop"])
-            Nodes[node]["CapacityDrop"] = np.zeros( Nodes[node]["NumIncomingLinks"] )
-            list_speeds = [Links[link]["Speed"] for link in Nodes[node]["IncomingLinksID"]]
+            Nodes[node]["CapacityDrop"] = np.zeros(
+                Nodes[node]["NumIncomingLinks"])
+            list_speeds = [Links[link]["Speed"]
+                           for link in Nodes[node]["IncomingLinksID"]]
             IN = np.where(np.array(list_speeds) < max(list_speeds))[0]
-            if len(list_speeds)>0:
+            if len(list_speeds) > 0:
                 Nodes[node]["CapacityDrop"][IN] = Drop
         #Nodes[node]["CapacityDrop"] = [Nodes[node]["CapacityDrop"], 0]
 
         # (h) transit times ---
-        if len(Nodes[node]["IncomingLinksID"])==0 or len(Nodes[node]["OutgoingLinksID"])==0:
+        if len(Nodes[node]["IncomingLinksID"]) == 0 or len(Nodes[node]["OutgoingLinksID"]) == 0:
             Nodes[node]["TransitTime"] = 0
         else:
-            Points = np.zeros((0,2))
+            Points = np.zeros((0, 2))
             Speeds = []
             # ...
             for ilink in Nodes[node]["IncomingLinksID"]:
-                Points = np.vstack((Points, Links[ilink]["Points"][:,-1]))
+                Points = np.vstack((Points, Links[ilink]["Points"][:, -1]))
                 Speeds.append(Links[ilink]["Speed"])
             # ...
             for out in range(len(Nodes[node]["OutgoingLinksID"])):
                 ilink = Nodes[node]["OutgoingLinksID"][out]
-                Points = np.vstack((Points, Links[ilink]["Points"][:,0]))
+                Points = np.vstack((Points, Links[ilink]["Points"][:, 0]))
                 Speeds.append(Links[ilink]["Speed"])
             # ...
             Points = Points.T
-            X = np.max(Points[0,:]) - np.min(Points[0,:])
-            Y = np.max(Points[1,:]) - np.min(Points[1,:])
+            X = np.max(Points[0, :]) - np.min(Points[0, :])
+            Y = np.max(Points[1, :]) - np.min(Points[1, :])
             Dist = np.sqrt(X**2 + Y**2)
             Speed = np.min(Speeds)
             Nodes[node]["TransitTime"] = Dist/Speed
@@ -443,20 +482,22 @@ def complete_nodes(Links, Nodes, Traffic):
 
     return Nodes
 
+
 def complete_exits(Nodes, Exits, General):
-#    if not(Exits):
-#        exit = {"NodeID" : [],
-#                "IncomingLinksID" : [],
-#                "Supply" : {"Time" : [], "Data" : []}}
-#        Exits = [exit]
+    #    if not(Exits):
+    #        exit = {"NodeID" : [],
+    #                "IncomingLinksID" : [],
+    #                "Supply" : {"Time" : [], "Data" : []}}
+    #        Exits = [exit]
     for exit in list(Exits.keys()):
         if not("Supply" in list(Exits[exit].keys())):
-            Exits[exit].update({"Supply" : {"Time" : [], "Data" : []}})
+            Exits[exit].update({"Supply": {"Time": [], "Data": []}})
     for node in list(Nodes.keys()):
-        if Nodes[node]["Type"] == 2: #exit
+        if Nodes[node]["Type"] == 2:  # exit
             Exits[node]["IncomingLinksID"] = Nodes[node]["IncomingLinksID"]
-            if not("Supply" in Exits[node].keys()) or len(Exits[node]["Supply"]["Time"]) == 0 or len(Exits[node]["Supply"]["Data"])==0:
-                Exits[node]["Supply"]["Time"] = [0, General["SimulationDuration"][-1]]
+            if not("Supply" in Exits[node].keys()) or len(Exits[node]["Supply"]["Time"]) == 0 or len(Exits[node]["Supply"]["Data"]) == 0:
+                Exits[node]["Supply"]["Time"] = [
+                    0, General["SimulationDuration"][-1]]
                 Exits[node]["Supply"]["Data"] = np.inf * np.ones(2)
             else:
                 if Exits[node]["Supply"]["Time"][-1] < General["SimulationDuration"][-1]:
@@ -465,7 +506,7 @@ def complete_exits(Nodes, Exits, General):
 
     return Exits
 
-#def complete_entries(Nodes, Links, Entries, Exits, VehicleClass):
+# def complete_entries(Nodes, Links, Entries, Exits, VehicleClass):
 #    # (1) Adding lacking items
 #    for entry in list(Entries.keys()):
 #        if not("DistributionPerDestination" in list(Entries[entry].keys())):
@@ -513,50 +554,83 @@ def complete_exits(Nodes, Exits, General):
 #            Entries[entry]["DistributionPerVehClass"] = np.hstack(np.array([1]), np.zeros([1, NumVehClasses - 1]))
 #    return Entries
 
-#def complete_routes(Routes):
+# def complete_routes(Routes):
 #    if len(Routes)==0:
 #        print("The routes used are defined by the user only : possible bug...")
 #    return
+
 
 def validation(Links, Nodes, Entries, Exits, warning="print"):
 
     # Validation of network connection
     for link in list(Links.keys()):
         if not("NumLanes" in Links[link].keys()):
-            if warning=="print": print("The number of lanes for link " + str(link) +  "must be defined.")
-            else: sys.exit("The number of lanes for link " + str(link) +  "must be defined.")
+            if warning == "print":
+                print("The number of lanes for link " +
+                      str(link) + "must be defined.")
+            else:
+                sys.exit("The number of lanes for link " +
+                         str(link) + "must be defined.")
         if not("NodeDownID" in Links[link].keys()):
-            if warning=="print": print("The link " + str(link) + " is not connected with any downstream node.")
-            else: sys.exit("The link " + str(link) + " is not connected with any downstream node.")
+            if warning == "print":
+                print("The link " + str(link) +
+                      " is not connected with any downstream node.")
+            else:
+                sys.exit("The link " + str(link) +
+                         " is not connected with any downstream node.")
         if not("NodeUpID" in Links[link].keys()):
-            if warning=="print": print("The link " + str(link) + " is not connected with any upstream node.")
-            else: sys.exit("The link " + str(link) + " is not connected with any upstream node.")
+            if warning == "print":
+                print("The link " + str(link) +
+                      " is not connected with any upstream node.")
+            else:
+                sys.exit("The link " + str(link) +
+                         " is not connected with any upstream node.")
     # ...
     # Validation of specific nodes
     for node in list(Nodes.keys()):
         # An entry nodes must have 0 upstream link and 1 link downstream
         if Nodes[node]["Type"] == 1:
             if Nodes[node]["IncomingLinksID"]:
-                if warning=="print": print("The node " + str(node) + " is an entry node : it cannot have an upstream link.")
-                else: sys.exit("The node " + str(node) + " is an entry node : it cannot have an upstream link.")
-            if len(Nodes[node]["OutgoingLinksID"])>1:
-                if warning=="print": print("The node " + str(node) + " is an entry node : it cannot have more than one downstream link.")
-                else: sys.exit("The node " + str(node) + " is an entry node : it cannot have more than one downstream link.")
+                if warning == "print":
+                    print("The node " + str(node) +
+                          " is an entry node : it cannot have an upstream link.")
+                else:
+                    sys.exit("The node " + str(node) +
+                             " is an entry node : it cannot have an upstream link.")
+            if len(Nodes[node]["OutgoingLinksID"]) > 1:
+                if warning == "print":
+                    print("The node " + str(node) +
+                          " is an entry node : it cannot have more than one downstream link.")
+                else:
+                    sys.exit("The node " + str(node) +
+                             " is an entry node : it cannot have more than one downstream link.")
 
         # An exit node must have 1 upstream link and 0 downstream link
         elif Nodes[node]["Type"] == 2:
             if Nodes[node]["OutgoingLinksID"]:
-                if warning=="print": print("The node " + str(node) + " is an exit node : it cannot have a downstream link.")
-                else: sys.exit("The node " + str(node) + " is an exit node : it cannot have a downstream link.")
-            if len(Nodes[node]["IncomingLinksID"])>1:
-                if warning=="print": print("The node " + str(node) + " is an exit node : it cannot have more than one upstream link.")
-                else: sys.exit("The node " + str(node) + " is an exit node : it cannot have more than one upstream link.")
+                if warning == "print":
+                    print("The node " + str(node) +
+                          " is an exit node : it cannot have a downstream link.")
+                else:
+                    sys.exit("The node " + str(node) +
+                             " is an exit node : it cannot have a downstream link.")
+            if len(Nodes[node]["IncomingLinksID"]) > 1:
+                if warning == "print":
+                    print("The node " + str(node) +
+                          " is an exit node : it cannot have more than one upstream link.")
+                else:
+                    sys.exit("The node " + str(node) +
+                             " is an exit node : it cannot have more than one upstream link.")
 
         # Merge and diverge
-        if len(Nodes[node]["IncomingLinksID"])>1:
+        if len(Nodes[node]["IncomingLinksID"]) > 1:
             if len(Nodes[node]["AlphaOD"]) != len(Nodes[node]["IncomingLinksID"]) + 1:
-                if warning=="print": print("The node " + str(node) + " AlphaOD is uncorrectly defined")
-                else: sys.exit("The node " + str(node) + " AlphaOD is uncorrectly defined")
+                if warning == "print":
+                    print("The node " + str(node) +
+                          " AlphaOD is uncorrectly defined")
+                else:
+                    sys.exit("The node " + str(node) +
+                             " AlphaOD is uncorrectly defined")
 
         # traffic light...
 

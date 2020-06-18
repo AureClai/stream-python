@@ -22,9 +22,7 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'pandas',
-        'bokeh',
         'matplotlib',
-        'PyQt5',
         'scipy'
     ],
 )
