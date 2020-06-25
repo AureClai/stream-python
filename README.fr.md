@@ -14,13 +14,13 @@ _Read this in other languages:_ _[English](https://github.com/AureClai/stream-py
 ## Sommaire
 
 - [Qu'est ce que Stream ?](#qu'est-ce-que-stream)
-- [Main features](#main-features)
+- [Principales fonctionnalités](#principales-fonctionnalites)
 - [Contact](#contact)
 - [Installation](#installation)
-- [Use](#use)
-  - [Use in command line](#use-in-command-line)
-  - [Use in scripts](#use-in-scripts)
-  - [Use QStream for scenario design](#use-qstream-for-scenario-design)
+- [Utilisation](#utilisation)
+  - [Utilisation en ligne de commande](#utilisation-en-ligne-de-commande)
+  - [Utilisation dans des scripts](#Utilisation-dans-des-scripts)
+  - [Utiliser QStream pour concevoir des scénarios](#utiliser-qstream-pour-concevoir-des-scenarios)
 - [Bugs](#bugs)
 - [License](#license)
 - [TODO](#todo)
