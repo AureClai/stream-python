@@ -12,7 +12,7 @@ def assignment(Simulation, When='initialization'):
 
     # --------- Creation of input dict for route calculation
     inputDict = {}
-    for key in ["Links", "Nodes", "Entries", "Exits"]:
+    for key in ["Links", "Nodes", "Entries", "Exits", "VehicleClass"]:
         inputDict.update({key: Simulation[key]})
 
     # --------- Routes calculation
@@ -32,8 +32,8 @@ def assignment(Simulation, When='initialization'):
 
 def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
     # init of array of route id - entryid - exitid
-    routeArray = np.array([[routeID, Routes[routeID]["EntryID"],
-                            Routes[routeID]["ExitID"]] for routeID in list(Routes.keys())])
+    routeArrays = {vehClass: np.array([[routeID, Routes[vehClass][routeID]["EntryID"],
+                                        Routes[vehClass][routeID]["ExitID"]] for routeID in list(Routes[vehClass].keys())]) for vehClass in Routes.keys()}
 
     # Change demand to not include zero flows
     Demand = Demand[np.where(Demand[:, 4] != 0)[0], :]
@@ -63,23 +63,25 @@ def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
                 vehicle = {}
                 # information of vehicle
                 line = d_OP[findLineByCumProb(d_OP[:, 4]), [1, 3]]
+                # Which vehicle class ?
+                currVehClass = int(line[0])
                 # determination of the RouteID
                 routeLine = findLineCorrespondingToInOut(
-                    routeArray[:, [1, 2]], entry, line[1])
+                    routeArrays[currVehClass][:, [1, 2]], entry, line[1])
                 # Security condition
                 if len(routeLine) != 0:
-                    routeID = routeArray[routeLine, 0][0]
+                    routeID = routeArrays[currVehClass][routeLine, 0][0]
                     nextLinkID = np.where(
-                        Nodes[entry]["OutgoingLinksID"] == Routes[routeID]["Path"][0])[0][0]
+                        Nodes[entry]["OutgoingLinksID"] == Routes[currVehClass][routeID]["Path"][0])[0][0]
                     vehicle.update({
                         "EntryID": int(entry),
                         "ExitID": int(line[1]),
-                        "VehicleClass": int(line[0]),
+                        "VehicleClass": currVehClass,
                         "NetworkArrivalTime": currTime,
                         "IDRoute": routeID,
-                        "Path": Routes[routeID]["Path"],
-                        "NodeList": Routes[routeID]["NodeList"],
-                        "NodeTimes": np.zeros(len(Routes[routeID]["NodeList"])),
+                        "Path": Routes[currVehClass][routeID]["Path"],
+                        "NodeList": Routes[currVehClass][routeID]["NodeList"],
+                        "NodeTimes": np.zeros(len(Routes[currVehClass][routeID]["NodeList"])),
                         "CurrentNode": -1,
                         "RealPath": []
                     })
@@ -88,8 +90,8 @@ def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
                     Vehicles.update({currID: vehicle})
                     currID += 1
                 else:
-                    print("Warning : no path between entry " +
-                          str(entry) + " and exit " + str(line[1]))
+                    print("WARNING : no path between entry " +
+                          str(entry) + " and exit " + str(line[1]) + " for vehicles of type " + str(currVehClass))
                 currTime = currTime + hMean
     print(str(len(Vehicles)) + " vehicles created...")
     # np.save('vehArray',np.array(vehArray))
@@ -97,22 +99,27 @@ def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
 
 
 def validation_of_demand(demandArray, Routes):
+
     # init of array of route id - entryid - exitid
-    routeArray = np.array([[routeID, Routes[routeID]["EntryID"],
-                            Routes[routeID]["ExitID"]] for routeID in list(Routes.keys())])
-    for entryID in np.unique(demandArray[:, 2]):
-        for exitID in np.unique(demandArray[:, 3]):
-            if len(findLineCorrespondingToInOut(routeArray[:, [1, 2]], entryID, exitID)) == 0:
-                demandLines = findLineCorrespondingToInOut(
-                    demandArray[:, [2, 3]], entryID, exitID)
-                if np.sum(demandArray[demandLines, 4]) != 0:
-                    # The route does not exist and there is a non null demand
-                    print("Warning : no path between entry " +
-                          str(entryID) + " and exit " + str(exitID))
-                    print("Every flow between these two extrems are set to zero...")
-                    # set the demand Lines to 0
-                    if len(demandLines) != 0:
-                        demandArray[demandLines, 4] = 0
+    routeArrays = {vehClass: np.array([[routeID, Routes[vehClass][routeID]["EntryID"], Routes[vehClass][routeID]["ExitID"]]
+                                       for routeID in list(Routes[vehClass].keys())]) for vehClass in Routes.keys()}
+
+    for vehClass in Routes.keys():
+        routeArray = routeArrays[vehClass]
+        for entryID in np.unique(demandArray[:, 2]):
+            for exitID in np.unique(demandArray[:, 3]):
+                if len(findLineCorrespondingToInOut(routeArray[:, [1, 2]], entryID, exitID)) == 0:
+                    demandLines = findLineCorrespondingToInOutAndVehicleClass(
+                        demandArray[:, [1, 2, 3]], entryID, exitID, vehClass)
+                    if np.sum(demandArray[demandLines, 4]) != 0:
+                        # The route does not exist and there is a non null demand
+                        print("Warning : no path between entry " +
+                              str(entryID) + " and exit " + str(exitID) + "for vehicle of class " + str(vehClass))
+                        print(
+                            "Every flow between these two extrems are set to zero...")
+                        # set the demand Lines to 0
+                        if len(demandLines) != 0:
+                            demandArray[demandLines, 4] = 0
     return demandArray
 
 ##############################################################################
@@ -133,3 +140,7 @@ def findLineByCumProb(arr):
 
 def findLineCorrespondingToInOut(InOutArray, entry, exit):
     return np.where(np.logical_and(InOutArray[:, 0] == entry, InOutArray[:, 1] == exit))[0]
+
+
+def findLineCorrespondingToInOutAndVehicleClass(InOutClassArray, entry, exit, vehClass):
+    return np.where(np.logical_and.reduce((InOutClassArray[:, 1] == entry, InOutClassArray[:, 2] == exit, InOutClassArray[:, 0] == vehClass)))[0]

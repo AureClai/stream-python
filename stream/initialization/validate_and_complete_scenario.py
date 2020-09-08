@@ -42,6 +42,9 @@ def validate_and_complete_scenario(Inputs, User=[]):
 ##############################################################################
 # Functions
 
+# Function template to enable users to change parameters
+# NOT IN USE
+
 
 def change_parameters_by_user(Inputs, User=[]):
 
@@ -53,6 +56,8 @@ def change_parameters_by_user(Inputs, User=[]):
                 eval(STRING)
                 print("Modifying : " + STRING)
     return Inputs
+
+# Add the missing variables to standardize the inputs of the simulation
 
 
 def add_missing_variables(Inputs):
@@ -97,6 +102,8 @@ def add_missing_variables(Inputs):
         Inputs.update({"Assimilation": {}})
 
     return Inputs
+
+# Complete the "General" key content to match with the standards
 
 
 def complete_general(General={}):
@@ -148,6 +155,7 @@ def complete_general(General={}):
     return General
 
 
+# Complete by default traffic if none is provided in the input dict
 def complete_by_default_traffic(Traffic={}, VehicleClass={}):
     if not(Traffic):
         # Fundamental diagram by lane
@@ -218,20 +226,23 @@ def complete_by_default_traffic(Traffic={}, VehicleClass={}):
 
     return (Traffic, VehicleClass)
 
-# Problem with links
+# Complete the "Links" key contents
 
 
 def complete_links(Links, Nodes, Traffic):
 
     for link in list(Links.keys()):
+        # Complete the missing "keys" of number of lanes and traffic
+        # display warning messages if none have been provided
         if not("NumLanes" in Links[link].keys()):
             Links[link]["NumLanes"] = 1
+            print("WARNING: No number of lanes has been set for link:" + str(link))
         if not("FD" in Links[link].keys()):
             Links[link]["FD"] = Traffic["FD"]
-            print('ATTENTION !!! PAS DE FD ???')
+            print('WARNOING: No Fundamental Diagram has been set for link: ' + str(link))
         # ...
-        # Partie Calage
-        # Change les valeurs en fonction de ce qui est mis dans le Scenario
+        # Calibration section
+        # Change values from link type to user-provided values
         if Links[link]["Speed"] == None:
             Links[link]["Speed"] = Links[link]["FD"]["u"]
 
@@ -243,6 +254,8 @@ def complete_links(Links, Nodes, Traffic):
             Links[link]["Priority"] = Links[link]["NumLanes"]
         # Modifie le FD en fonction du calage
         Links = update_link_DF(Links, link)
+        # ...
+        # Lane Fundamental Diagram Section to different lane behavior : NOT IN USE
 #        if not("LFD" in Links[link].keys()) or not("values" in Links[link]["LFD"].keys()):
 #            LFD = {}
 #            if Links[link]["NumLanes"] == 1:
@@ -259,6 +272,8 @@ def complete_links(Links, Nodes, Traffic):
 # elif len(Links[link]["LFD"]["values"]) != Links[link]["NumLanes"]:
 ##            Message = "Warning! The number of lanes for link " + str(link) + " is different from the number of specified LFDs on this link."
 ##            raise BaseException(Message)
+
+    # If the length has not been set up, calculate it with the points
         if not("Length" in Links[link].keys()):
             Temp_List_X = np.array(Links[link]["Points"][0, :])
             Temp_List_Y = np.array(Links[link]["Points"][1, :])
@@ -268,17 +283,26 @@ def complete_links(Links, Nodes, Traffic):
                     np.sqrt((Temp_List_X[j+1] - Temp_List_X[j]) **
                             2 + (Temp_List_Y[j+1] - Temp_List_Y[j])**2)
             Links[link]["Length"] = Temp_L
+        # Mean travel time
         if not("MeanTravelTime" in Links[link].keys()):
             Links[link]["MeanTravelTime"] = Links[link]["Length"] / \
                 Links[link]["Speed"]
+        # Node Up Id
         if not("NodeUpID" in Links[link].keys()):
             Links[link]["NodeUpID"] = []
+        # Node down ID
         if not("NodeDownID" in Links[link].keys()):
             Links[link]["NodeDownID"] = []
         # ...
         # Partie régulation
         if not("AssociatedLink" in Links[link].keys()):
             Links[link]["AssociatedLink"] = None
+        
+        # ...
+        # Reserved links for certain category of vehicles
+        # Has to be an array
+        if not("IsReservedTo" in Links[link].keys()):
+            Links[link]["IsReservedTo"] = []
 
     for node in list(Nodes.keys()):
         # ----
@@ -404,7 +428,7 @@ def complete_nodes(Links, Nodes, Traffic):
 
         # (e) SignalID ---
         if not('SignalsID' in Nodes[node].keys()):
-            Node[node]['SignalsID'] = [0 for i in range(
+            Nodes[node]['SignalsID'] = [0 for i in range(
                 Nodes[node]['NumncomingLinks'] + 1)]
         if len(Nodes[node]['SignalsID']) != Nodes[node]['NumIncomingLinks'] + 1:
             Nodes[node]['SignalsID'].append(0)
