@@ -23,6 +23,9 @@ HERE IS THE ASSIGNMENT !
 Simulation["Links"][14]["IsReservedTo"] = list(filter(lambda x: x!= 1, list(Simulation["VehicleClass"].keys())))
 Simulation["Links"][15]["IsReservedTo"] = [1]
 
+Simulation["Links"][17]["IsReservedTo"] = list(filter(lambda x: x!= 1, list(Simulation["VehicleClass"].keys())))
+Simulation["Links"][18]["IsReservedTo"] = [1]
+
 # Test if "IsReservedTo" are set to []
 validate_and_complete_scenario(Simulation)
 
@@ -47,40 +50,67 @@ Exits : 2 7 12
 from stream.initialization.assignment import assignment
 Simulation = assignment(Simulation)
 
-# This calculate the unique paths taken by the busses
-uniquePaths = []
-for veh in Simulation["Vehicles"].keys():
-    if Simulation["Vehicles"][veh]["VehicleClass"]==1:
-        if not(Simulation["Vehicles"][veh]["Path"] in uniquePaths):
-            uniquePaths.append(Simulation["Vehicles"][veh]["Path"])
-            
-# plot them
+# Path plotting section
 from stream.analysis.analysis import plot_network
-for Path in uniquePaths:
+# # This calculate the unique paths taken by the busses
+# uniquePaths = []
+# for veh in Simulation["Vehicles"].keys():
+#     if Simulation["Vehicles"][veh]["VehicleClass"]==1:
+#         if not(Simulation["Vehicles"][veh]["Path"] in uniquePaths):
+#             uniquePaths.append(Simulation["Vehicles"][veh]["Path"])
+            
+# # plot them
+# for Path in uniquePaths:
+#     plt.figure()
+#     plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = False, bool_nodeid = False, new = False )
+#     for linkid in Path:
+#         plt.plot( Simulation["Links"][linkid]["Points"][0], Simulation["Links"][linkid]["Points"][1],\
+#         color = (.82, .37, .37), linewidth = 3 )
+#     plt.plot( Simulation["Links"][Path[0]]["Points"][0,0], Simulation["Links"][Path[0]]["Points"][1,0] ,'.', color='lime')
+#     plt.plot( Simulation["Links"][Path[-1]]["Points"][0,-1], Simulation["Links"][Path[-1]]["Points"][1,-1],'r.')
+#     plt.title("One path for buses")
+    
+#     plt.show()
+
+
+# # This calculate the unique paths taken by the cars
+# uniquePaths = []
+# for veh in Simulation["Vehicles"].keys():
+#     if Simulation["Vehicles"][veh]["VehicleClass"]==0:
+#         if not(Simulation["Vehicles"][veh]["Path"] in uniquePaths):
+#             uniquePaths.append(Simulation["Vehicles"][veh]["Path"])
+            
+# # plot them
+# for Path in uniquePaths:
+#     plt.figure()
+#     plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = False, bool_nodeid = False, new = False )
+#     for linkid in Path:
+#         plt.plot( Simulation["Links"][linkid]["Points"][0], Simulation["Links"][linkid]["Points"][1],\
+#         color = (.82, .37, .37), linewidth = 3 )
+#     plt.plot( Simulation["Links"][Path[0]]["Points"][0,0], Simulation["Links"][Path[0]]["Points"][1,0] ,'.', color='lime')
+#     plt.plot( Simulation["Links"][Path[-1]]["Points"][0,-1], Simulation["Links"][Path[-1]]["Points"][1,-1],'r.')
+#     plt.title("One path for cars")
+    
+#     plt.show()            
+    
+# plot Routes for busses
+for Path in [Simulation["Routes"][1][key]["Path"] for key in list(Simulation["Routes"][1].keys())]:
     plt.figure()
-    plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = True, bool_nodeid = False, new = False )
+    plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = False, bool_nodeid = False, new = False )
     for linkid in Path:
         plt.plot( Simulation["Links"][linkid]["Points"][0], Simulation["Links"][linkid]["Points"][1],\
         color = (.82, .37, .37), linewidth = 3 )
     plt.plot( Simulation["Links"][Path[0]]["Points"][0,0], Simulation["Links"][Path[0]]["Points"][1,0] ,'.', color='lime')
     plt.plot( Simulation["Links"][Path[-1]]["Points"][0,-1], Simulation["Links"][Path[-1]]["Points"][1,-1],'r.')
-    plt.title("One path for buses")
+    plt.title("One path for busses")
     
-    plt.show()
+    plt.show()  
 
 
-# This calculate the unique paths taken by the cars
-uniquePaths = []
-for veh in Simulation["Vehicles"].keys():
-    if Simulation["Vehicles"][veh]["VehicleClass"]==0:
-        if not(Simulation["Vehicles"][veh]["Path"] in uniquePaths):
-            uniquePaths.append(Simulation["Vehicles"][veh]["Path"])
-            
-# plot them
-from stream.analysis.analysis import plot_network
-for Path in uniquePaths:
+# plot Routes for Cars
+for Path in [Simulation["Routes"][0][key]["Path"] for key in list(Simulation["Routes"][0].keys())]:
     plt.figure()
-    plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = True, bool_nodeid = False, new = False )
+    plot_network( Simulation, color = (0.5, 0.5, 0.5), linewidth = 1, bool_linkid = False, bool_nodeid = False, new = False )
     for linkid in Path:
         plt.plot( Simulation["Links"][linkid]["Points"][0], Simulation["Links"][linkid]["Points"][1],\
         color = (.82, .37, .37), linewidth = 3 )
@@ -88,5 +118,4 @@ for Path in uniquePaths:
     plt.plot( Simulation["Links"][Path[-1]]["Points"][0,-1], Simulation["Links"][Path[-1]]["Points"][1,-1],'r.')
     plt.title("One path for cars")
     
-    plt.show()            
-    
+    plt.show()  
