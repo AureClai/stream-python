@@ -32,13 +32,17 @@ Les avantages de cette méthode de résolution sont (i) les temps de calculs amo
 
 ## Principales fonctionnalités
 
-1. Lecture de scénario depuis des fichiers `.npy`
-2. Affectation au plus court chemin
-3. Simulation méscoscopique événementielle
-4. Implémentation des voies réservées
+- Coeur de calcul mesoscopique événementiel
+- Affectation **statique** en amont et au plus cours chemin
+- Gestion limitée \* de différentes classes de véhicules
+- Gestion de noeuds complexes
+- Gestion des carrefour à feux
+- Gestion des voies spécifiques (voies réservées et auxiliaires)
+- Régulation dynamique en cours de simulation
 
 ## Contact
 
+La principale contribution est réalisée par la Direction Départemental Centre-Est du Cerema. En cas de question, veuillez envoyer un mail à l'adresse suivante :
 aurelien.clairais@cerema.fr
 
 ## Installation
@@ -51,11 +55,24 @@ $ conda create --name myenv
 $ conda activate myenv
 ```
 
-L'installation se fait via un clône du répertoire suivit d'une installation du package avec `pip` :
+L'installation se fait via un clône du répertoire suivit d'une installation du package avec `pip`.
+
+### 1. Cloner le répertoire
 
 ```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
+```
+
+### 2. _(facultatif)_ Changer de branche (si développement sur autre branche que _master_)
+
+```console
+$ git checkout la_branche
+```
+
+### 3. Installer
+
+```console
 $ pip install .
 ```
 
@@ -63,33 +80,56 @@ $ pip install .
 
 ### Utilisation en ligne de commande
 
-Pour cette version : **tester seulement avec l'exemple** dans le dossier `example`.
-
 ```
-$ cd path_to_example_directory/
-$ python -m stream inputs.npy
+$ cd path_to_input_ny/
+$ python -m file_of_inputs.npy
 ```
 
 A partir d'ici, un nouveau dossier `result` a été créé avec les résultats de la simulation associés à la date et l'heure au format `.npy`.
 
-### Utilisation dans des scripts
+### Utilisation via un script python
 
-Importer les fonctions et les utiliser (voir le code source et/ou la documentation).
+```python
+from stream.main import run_simulation_from_inputs
+import numpy as np
 
-TODO : Ecrire la documentation
+# Importer le fichier d'entrées
+Inputs = np.load("chemin_vers_le_fichier_inputs.npy", allow_pickle=True).item()
+Simulation = run_simulation_from_inputs(Inputs)
+```
+
+Ici, les résultats sont créé sous la forme d'un dictionnaire dans la variable `Simulation`.
 
 ### Utiliser QStream pour concevoir des scénarios
 
-(**Windows Seulement**)
-
-L'extension QGIS https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) permet :
+L'extension QGIS https://gitlab.cerema.fr/Stream/qstream permet :
 
 - la définiton de scénarios
 - des fonctionnalités d'analyse
 
+### Exemple
+
+Pour lancer le fichier d'exemple dans le dossier `stream-python` via la console de commande :
+
+```console
+$ cd example
+$ python -m inputs.npy
+```
+
+ou via un script Python :
+
+```python
+from stream.main import run_simulation_from_inputs
+import numpy as np
+
+# Importer le fichier d'entrées
+Inputs = np.load("inputs.npy", allow_pickle=True).item()
+Simulation = run_simulation_from_inputs(Inputs)
+```
+
 ## Bugs
 
-Pas de bugs connus. Si vous voyez quoique ce soit, merci d'ouvrir une "_issue_".
+Pas de bugs connus. Si vous êtes témoins d'un bug, merci d'ouvrir une ["_issue_"](https://github.com/AureClai/stream-python/issues/new).
 
 ## License
 
@@ -97,11 +137,9 @@ Pas de bugs connus. Si vous voyez quoique ce soit, merci d'ouvrir une "_issue_".
 
 ## TODO
 
-(section dev en anglais)
-
-1. Implement `bokeh`-based dashboard for result analysis
-2. Variable flows at exits
-3. Moddable affectation module
-4. Dynamical Speed Regulation
-5. On-ramp regulation
-6. Other format for in and out (JSON, XML, etc...)
+1. Implémentation d'outils de visualisation avec la librairies Python `dash` de Plotly
+2. Gestion de capacité variables en sortie de réseau
+3. Plusieurs modes d'affectation
+4. Régulation dynamique des vitesses
+5. Régulation d'accès
+6. Gestion d'autres types de fomat d'entrées/sorties
