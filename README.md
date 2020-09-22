@@ -1,93 +1,135 @@
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
+
 <p align="center">
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
 
-<h1 align="center">Mesoscopic event-based open-source traffic simulator</h1>
+<h1 align="center">Simulateur de trafic mésoscopique événementiel open-source</h1>
 
-This repository is based on a fork from a project from the [Cerema](https://cerema.fr).
+Ce dossier est basé sur un _fork_ d'un projet du [Cerema](https://cerema.fr)
 https://gitlab.cerema.fr/Stream/stream-python
 
-_Read this in other languages:_ _[English](https://github.com/AureClai/stream-python/blob/master/README.md)_, _[French](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
+_Read this in other languages:_ _[English](https://github.com/AureClai/stream-python/blob/master/README.en.md)_
 
-## Table of Contents
+## Sommaire
 
-- [What is Stream ?](#what-is-stream)
-- [Main features](#main-features)
+- [Qu'est ce que Stream ?](#qu'est-ce-que-stream)
+- [Principales fonctionnalités](#principales-fonctionnalites)
 - [Contact](#contact)
 - [Installation](#installation)
-- [Use](#use)
-  - [Use in command line](#use-in-command-line)
-  - [Use in scripts](#use-in-scripts)
-  - [Use QStream for scenario design](#use-qstream-for-scenario-design)
+- [Utilisation](#utilisation)
+  - [Utilisation en ligne de commande](#utilisation-en-ligne-de-commande)
+  - [Utilisation dans des scripts](#Utilisation-dans-des-scripts)
+  - [Utiliser QStream pour concevoir des scénarios](#utiliser-qstream-pour-concevoir-des-scenarios)
 - [Bugs](#bugs)
 - [License](#license)
 - [TODO](#todo)
 
-## What is Stream ?
+## Qu'est ce que Stream ?
 
-Stream is mesoscopic road traffic simulation tool, that is that the scale of resolution is an intermediary to the microscopic and macroscopic scales. It processes vehicles instead of flows. It only calculates the passing times of the vehicles at the nodes of the network instead of calculating every position with a fixed time step. The pros of this method of resolution are that (i) the calculatation times are less than with a microscopic resolution, (ii) a smaller number of parameters with a clear physical sens easing the calibration of the model compared to the microscopic, (iii) a great diversity of applications with less restrictions than the macroscopic resolution.
+Stream est un outil de simulation mésoscopique du trafic routier, c'est-à-dire un outil dont le niveau de résolution est intermédiaire aux niveaux microscopique et macroscopique. Il considère également des véhicules plutôt qu'un flux, mais se contente de calculer les dates de passage des véhicules aux noeuds du réseau routier, plutôt que de calculer toutes ses positions à pas de temps fixe.
+Les avantages de cette méthode de résolution sont (i) les temps de calculs amoindris par rapport au microscopique, (ii) un nombre réduit de paramètres au sens physique clair facilitant la démarche de paramétrage de l'outil par rapport au microscopique, (iii) une grande diversité de cas d'usage bien moins restrictifs que le macroscopique.
 
-## Main Features
+## Principales fonctionnalités
 
-1. Scenario reading from `.npy` file
-2. Shortest path affectation
-3. Mesoscopic event-based Simulation
-4. Managed lane regulation implementation
+- Coeur de calcul mesoscopique événementiel
+- Affectation **statique** en amont et au plus cours chemin
+- Gestion limitée \* de différentes classes de véhicules
+- Gestion de noeuds complexes
+- Gestion des carrefour à feux
+- Gestion des voies spécifiques (voies réservées et auxiliaires)
+- Régulation dynamique en cours de simulation
 
 ## Contact
 
+La principale contribution est réalisée par la Direction Départemental Centre-Est du Cerema. En cas de question, veuillez envoyer un mail à l'adresse suivante :
 aurelien.clairais@cerema.fr
 
 ## Installation
 
-Stream works well with [Anaconda](https://www.anaconda.com/distribution/) for Python 3.7.
-With Anaconda, the use of [virtual environnments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended :
+Stream est fonctionnel sous [Anaconda](https://www.anaconda.com/distribution/) pour Python 3.7.
+Avec Anaconda, l'utilisation d'[environments virtuels](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) est recommandé :
 
 ```
 $ conda create --name myenv
 $ conda activate myenv
 ```
 
-The installation is made via clonning the directory followed by an installation with `pip` :
+L'installation se fait via un clône du répertoire suivit d'une installation du package avec `pip`.
+
+### 1. Cloner le répertoire
 
 ```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
+```
+
+### 2. _(facultatif)_ Changer de branche (si développement sur autre branche que _master_)
+
+```console
+$ git checkout la_branche
+```
+
+### 3. Installer
+
+```console
 $ pip install .
 ```
 
-## Use
+## Utilisation
 
-### Use in command line
-
-For this version : **test only with the provided examples** in `example`directory.
+### Utilisation en ligne de commande
 
 ```
-$ cd path_to_example_directory/
-$ python -m stream inputs.npy
+$ cd path_to_input_ny/
+$ python -m file_of_inputs.npy
 ```
 
-From now, a new directory `result` has been created with the result of the simulation with date and time with the `.npy` extension.
+A partir d'ici, un nouveau dossier `result` a été créé avec les résultats de la simulation associés à la date et l'heure au format `.npy`.
 
-### Use in scripts
+### Utilisation via un script python
 
-Import the functions and use it (see source code and/or documentation).
+```python
+from stream.main import run_simulation_from_inputs
+import numpy as np
 
-TODO : write the documentation for use in scripts
+# Importer le fichier d'entrées
+Inputs = np.load("chemin_vers_le_fichier_inputs.npy", allow_pickle=True).item()
+Simulation = run_simulation_from_inputs(Inputs)
+```
 
-### Use QStream for scenario design
+Ici, les résultats sont créé sous la forme d'un dictionnaire dans la variable `Simulation`.
 
-(**Windows Only**)
+### Utiliser QStream pour concevoir des scénarios
 
-The QGIS plugin at https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) provides :
+L'extension QGIS https://gitlab.cerema.fr/Stream/qstream permet :
 
-- Scenario definition
-- Analysis features
+- la définiton de scénarios
+- des fonctionnalités d'analyse
+
+### Exemple
+
+Pour lancer le fichier d'exemple dans le dossier `stream-python` via la console de commande :
+
+```console
+$ cd example
+$ python -m inputs.npy
+```
+
+ou via un script Python :
+
+```python
+from stream.main import run_simulation_from_inputs
+import numpy as np
+
+# Importer le fichier d'entrées
+Inputs = np.load("inputs.npy", allow_pickle=True).item()
+Simulation = run_simulation_from_inputs(Inputs)
+```
 
 ## Bugs
 
-No known bugs. Please write an issue if you see anything.
+Pas de bugs connus. Si vous êtes témoins d'un bug, merci d'ouvrir une ["_issue_"](https://github.com/AureClai/stream-python/issues/new).
 
 ## License
 
@@ -95,9 +137,9 @@ No known bugs. Please write an issue if you see anything.
 
 ## TODO
 
-1. Implement `bokeh`-based dashboard for result analysis
-2. Variable flows at exits
-3. Moddable affectation module
-4. Dynamical Speed Regulation
-5. On-ramp regulation
-6. Other format for in and out (JSON, XML, etc...)
+1. Implémentation d'outils de visualisation avec la librairies Python `dash` de Plotly
+2. Gestion de capacité variables en sortie de réseau
+3. Plusieurs modes d'affectation
+4. Régulation dynamique des vitesses
+5. Régulation d'accès
+6. Gestion d'autres types de fomat d'entrées/sorties
