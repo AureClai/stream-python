@@ -105,7 +105,9 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             print("At time " + str(NextAction["Time"]) + " modifying the link " + str(firstLinkID) + " to integrate the managed lane link " + str(
                 secondLinkID) + " for the class " + S["VehicleClass"][classID]["Name"] + ".")
             print("Links sharing values by class :")
-            print(values)
+            print(f".\t\t{firstLinkID}\t\t{secondLinkID}")
+            for index, classID in enumerate(S['VehicleClass'].keys()):
+                print(f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
             print("----------------------")
         S["Links"][firstLinkID]["LaneProbabilities"] = values
 
@@ -130,7 +132,9 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             print("At time " + str(NextAction["Time"]) + " modifying the link " + str(firstLinkID) + " to deactivate the managed lane link " + str(
                 secondLinkID) + " for the class " + S["VehicleClass"][classID]["Name"] + ".")
             print("Links sharing values by class :")
-            print(values)
+            print(f".\t\t{firstLinkID}\t\t{secondLinkID}")
+            for index, classID in enumerate(S['VehicleClass'].keys()):
+                print(f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
             print("----------------------")
         S["Links"][firstLinkID]["LaneProbabilities"] = values
 
