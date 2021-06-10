@@ -325,7 +325,7 @@ def update_link_DF(Links, i):
     C = Links[i]['Capacity']/Links[i]["NumLanes"]
 
     FD.update({'u': u, 'C': C, 'w': C / (kx - C/u)})
-    Links[i]["FD"].update({"FD": FD})
+    Links[i].update({"FD": FD})
     return Links
 
 

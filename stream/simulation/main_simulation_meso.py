@@ -127,6 +127,8 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
         for i in range(len(S["VehicleClass"])):
             values.append([numLanesFirst/numLanesTotal,
                            1. - numLanesFirst/numLanesTotal])
+        S["Links"][firstLinkID]["LaneProbabilities"] = values
+        #...
         if NextAction["Args"]["Display"]:
             print("----------------------")
             print("At time " + str(NextAction["Time"]) + " modifying the link " + str(firstLinkID) + " to deactivate the managed lane link " + str(
@@ -136,7 +138,18 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             for index, classID in enumerate(S['VehicleClass'].keys()):
                 print(f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
             print("----------------------")
-        S["Links"][firstLinkID]["LaneProbabilities"] = values
+    
+    # ...
+    if NextAction['Type'] == 'speed_limit':
+        Args = NextAction['Args']
+        concerned_link = Args['LinkID']
+        S['Links'][concerned_link]['Speed'] = Args['Speed'] 
+        S['Links'][concerned_link]['Capacity'] = Args['Capacity']
+        # ...
+        if NextAction['Args']['Display']:
+            print("----------------------")
+            print(f"At time {NextAction['Time']} adpatating the speed for link {concerned_link} : Speed {Args['Speed']} and Capacity {Args['Capacity']}")
+            print("----------------------")
 
     # ...
     ListActions, NextAction = compute_next_action(

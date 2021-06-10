@@ -215,6 +215,7 @@ def initialize_actions(Simulation):
     # initialize if necessary
     if not "Actions" in list(Simulation):
         Simulation["Actions"] = []
+    Actions = []
     # ...
     # Display times
     step_time = Simulation["General"]["TimesStepByDefault"]  # sec
@@ -228,11 +229,13 @@ def initialize_actions(Simulation):
         Action['Time'] = disp_time
         Action['Type'] = 'display_time_simulation'
         Action['Args'] = {}
-        Simulation['Actions'].append(Action)
+        Actions.append(Action)
     # ...
-    # Managed lanes
+    # Loop for all the regulations
     for reg in list(Simulation["Regulations"]):
         Regulation = Simulation["Regulations"][reg]
+        # ...
+        # Managed lanes
         if Regulation['Type'] == 'managed_lane':
             for managedLaneLink in Regulation['Args']['Links']:
                 activated = False
@@ -248,10 +251,43 @@ def initialize_actions(Simulation):
                         activated = True
                     Action['Args'] = {
                         'LinkID': managedLaneLink, 'Class': Regulation['Args']['Class'], 'Display': True}
-                    Simulation['Actions'].append(Action)
+                    Actions.append(Action)
+        # ...
+        # Speed Limit
+        if Regulation['Type'] == 'speed_limit':
+            for concerned_link in Regulation['Args']['Links']:
+                # ...
+                base_speed = Simulation['Links'][concerned_link]['Speed']
+                base_capacity = Simulation['Links'][concerned_link]['Capacity']
+                for timeframe in Regulation['Args']['timeframes']:
+                    # ...
+                    # Limit the actions to the SimulationDuration range
+                    if timeframe['start'] >= Simulation['General']['SimulationDuration'][1]:
+                        continue
+                    # ...
+                    # new Speed and new Capacity preparation
+                    new_speed = base_speed
+                    if timeframe['parameters']['speed']:
+                        new_speed = timeframe['parameters']['speed']
+                    new_capacity = base_capacity
+                    if timeframe['parameters']['increase_capacity']:
+                        new_capacity = base_capacity * (1+timeframe['parameters']['increase_capacity'])
+                    # ...
+                    # Action creation
+                    Action = {}
+                    Action['Time'] = timeframe['start']
+                    Action['Type'] = 'speed_limit'
+                    Action['Args'] = {
+                        'LinkID' : concerned_link,
+                        'Speed' : new_speed,
+                        'Capacity' : new_capacity,
+                        'Display' : True
+                        }
+                    Actions.append(Action)
     # ...
     # Sort actions
-    Simulation['Actions'] = sortActionsByTime(Simulation["Actions"])
+    Actions = sortActionsByTime(Actions)
+    Simulation['Actions'] = Actions
     # ...
     return Simulation
 
