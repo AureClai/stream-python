@@ -104,7 +104,7 @@ def complete_general(General={}):
         General["SimulationDuration"] = [0, 60]
         General["SimulationModel"] = 'MesoLWR'
         General["Peloton"] = 1
-        General["TimesStepByDefault"] = 360
+        General["TimesStepByDefault"] = 0
         # Type of each model component (deterministic vs Stochasticity
         Stochasticity = {}
         Stochasticity["Demand"] = False
@@ -125,7 +125,7 @@ def complete_general(General={}):
         if not("Peloton" in General.keys()):
             General["Peloton"] = 1
         if not("TimesStepByDefault" in General.keys()):
-            General["TimesStepByDefault"] = 360
+            General["TimesStepByDefault"] = 0
         if not("Stochasticity" in General.keys()):
             Stochasticity = {}
             Stochasticity["Demand"] = False

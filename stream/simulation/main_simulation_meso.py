@@ -101,14 +101,12 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             else:
                 values.append([1, 0])
         if NextAction["Args"]["Display"]:
-            print("----------------------")
-            print("At time " + str(NextAction["Time"]) + " modifying the link " + str(firstLinkID) + " to integrate the managed lane link " + str(
-                secondLinkID) + " for the class " + S["VehicleClass"][classID]["Name"] + ".")
+            print(f"@Stream[{NextAction['Time']}]: modifying the link {firstLinkID} to activate the managed lane link {secondLinkID} for the class {S['VehicleClass'][classID]['Name']}")
             print("Links sharing values by class :")
             print(f".\t\t{firstLinkID}\t\t{secondLinkID}")
             for index, classID in enumerate(S['VehicleClass'].keys()):
-                print(f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
-            print("----------------------")
+                print(
+                    f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
         S["Links"][firstLinkID]["LaneProbabilities"] = values
 
     # ...
@@ -128,28 +126,31 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             values.append([numLanesFirst/numLanesTotal,
                            1. - numLanesFirst/numLanesTotal])
         S["Links"][firstLinkID]["LaneProbabilities"] = values
-        #...
+        # ...
         if NextAction["Args"]["Display"]:
-            print("----------------------")
-            print("At time " + str(NextAction["Time"]) + " modifying the link " + str(firstLinkID) + " to deactivate the managed lane link " + str(
-                secondLinkID) + " for the class " + S["VehicleClass"][classID]["Name"] + ".")
+            print(f"@Stream[{NextAction['Time']}]: modifying the link {firstLinkID} to deactivate the managed lane link {secondLinkID} for the class {S['VehicleClass'][classID]['Name']}")
             print("Links sharing values by class :")
             print(f".\t\t{firstLinkID}\t\t{secondLinkID}")
             for index, classID in enumerate(S['VehicleClass'].keys()):
-                print(f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
-            print("----------------------")
-    
+                print(
+                    f"{S['VehicleClass'][classID]['Name']}\t\t{values[index][0]:0.2f}\t\t{values[index][1]:0.2f}")
+
     # ...
     if NextAction['Type'] == 'speed_limit':
         Args = NextAction['Args']
         concerned_link = Args['LinkID']
-        S['Links'][concerned_link]['Speed'] = Args['Speed'] 
+        S['Links'][concerned_link]['Speed'] = Args['Speed']
         S['Links'][concerned_link]['Capacity'] = Args['Capacity']
         # ...
         if NextAction['Args']['Display']:
-            print("----------------------")
-            print(f"At time {NextAction['Time']} adpatating the speed for link {concerned_link} : Speed {Args['Speed']} and Capacity {Args['Capacity']}")
-            print("----------------------")
+            print(
+                f"@Stream[{NextAction['Time']}] : adpatating the speed for link {concerned_link} : Speed {Args['Speed']} and Capacity {Args['Capacity']}")
+    # ...
+    if NextAction['Type'] == 'custom':
+        func = NextAction['Args']['FunctionToCall']
+        print(
+            f"@Stream: [{NextAction['Time']}], custom regulation calling function {func.__name__}")
+        func(S)
 
     # ...
     ListActions, NextAction = compute_next_action(
@@ -162,7 +163,7 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
 # --------------------- Sub-functions of compute_next_event -------------------
 # =============================================================================
 def tackle_vehicle_event(S, ListEvents, NextEvent):
-        # --- Calculation of the event ---
+    # --- Calculation of the event ---
     Event_NodeID, NodeID, Event_NodeDownID, NodeDownID, Event_NodeUpID, NodeUpID =\
         execute_and_update_event(S["Links"],
                                  S["Exits"],

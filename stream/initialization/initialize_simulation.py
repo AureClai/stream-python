@@ -121,7 +121,7 @@ def initialize_regulations(Simulation):
     for reg in list(Simulation["Regulations"]):
         Regulation = Simulation["Regulations"][reg]
         # ...
-        # Adapt the simulation with a managed Lane 
+        # Adapt the simulation with a managed Lane
         if Regulation['Type'] == 'managed_lane':
             # ...
             # IF "Links_HOL" is not set in the regulation dict.
@@ -130,7 +130,8 @@ def initialize_regulations(Simulation):
                 for managedLaneLink in Regulation['Args']['Links']:
                     # Creation of a new link
                     newLinkID = max(list(Simulation["Links"]))+1
-                    newLink = copy.deepcopy(Simulation["Links"][managedLaneLink])
+                    newLink = copy.deepcopy(
+                        Simulation["Links"][managedLaneLink])
                     newLink["NumLanes"] = 1
                     Simulation["Links"].update({newLinkID: newLink})
                     if "Capacity" in list(Regulation['Args'].keys()):
@@ -138,7 +139,7 @@ def initialize_regulations(Simulation):
                         update_link_DF(Simulation["Links"], newLinkID)
                     else:
                         Simulation["Links"][newLinkID]["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
-    
+
                     # ...
                     # Modify the existing link
                     NumLanes = Simulation["Links"][managedLaneLink]['NumLanes']
@@ -146,7 +147,7 @@ def initialize_regulations(Simulation):
                     LaneProbability = [ratio1, 1-ratio1]
                     LaneProbabilities = [LaneProbability for vehclass in list(
                         Simulation['VehicleClass'])]
-    
+
                     # Capacity
                     if "Capacity" in list(Regulation['Args'].keys()):
                         cap = NumLanes * \
@@ -155,7 +156,7 @@ def initialize_regulations(Simulation):
                     else:
                         cap = (NumLanes-1) * \
                             Simulation["Links"][managedLaneLink]["FD"]["C"]
-    
+
                     Simulation["Links"][managedLaneLink].update({
                         'AssociatedLink': newLinkID,
                         'LaneProbabilities': LaneProbabilities,
@@ -163,7 +164,7 @@ def initialize_regulations(Simulation):
                         'Capacity': cap
                     })
                     update_link_DF(Simulation["Links"], managedLaneLink)
-    
+
                     # ...
                     # Modify the nodes
                     nodeup = Simulation["Links"][managedLaneLink]["NodeUpID"]
@@ -190,21 +191,23 @@ def initialize_regulations(Simulation):
                     associated_link = Simulation['Links'][associated_link_id]
                     # 'LaneProbabilities' : initialisation same probability for all vehicles
                     managed_link = Simulation['Links'][managedLaneLinkID]
-                    ratio_nb_lanes = managed_link['NumLanes'] / (managed_link['NumLanes'] + associated_link['NumLanes'])
+                    ratio_nb_lanes = managed_link['NumLanes'] / (
+                        managed_link['NumLanes'] + associated_link['NumLanes'])
                     lane_probability = [ratio_nb_lanes, 1 - ratio_nb_lanes]
-                    lane_probabilities = [lane_probability for vehclass in list(Simulation['VehicleClass'])]
+                    lane_probabilities = [
+                        lane_probability for vehclass in list(Simulation['VehicleClass'])]
                     # ...
                     # Update the link
                     Simulation["Links"][managedLaneLinkID].update({
-                    'AssociatedLink': associated_link_id,
-                    'LaneProbabilities': lane_probabilities,
+                        'AssociatedLink': associated_link_id,
+                        'LaneProbabilities': lane_probabilities,
                     })
-                
+
         # ...
         # Adapt the simulation with a dynamic_speed_adaptation
         if Regulation['Type'] == 'dynamic_speed_adaptation':
             pass
-            
+
     # ...
     return Simulation
 
@@ -219,17 +222,18 @@ def initialize_actions(Simulation):
     # ...
     # Display times
     step_time = Simulation["General"]["TimesStepByDefault"]  # sec
-    display_times = np.arange(Simulation["General"]["SimulationDuration"][0],
-                              Simulation["General"]["SimulationDuration"][1] + 2 * step_time, step_time)
-    display_times = display_times - \
-        (Simulation["General"]["SimulationDuration"][0] % step_time)
-    for disp_time in display_times:
-        # ...
-        Action = {}
-        Action['Time'] = disp_time
-        Action['Type'] = 'display_time_simulation'
-        Action['Args'] = {}
-        Actions.append(Action)
+    if step_time != None and step_time > 0:
+        display_times = np.arange(Simulation["General"]["SimulationDuration"][0],
+                                  Simulation["General"]["SimulationDuration"][1] + 2 * step_time, step_time)
+        display_times = display_times - \
+            (Simulation["General"]["SimulationDuration"][0] % step_time)
+        for disp_time in display_times:
+            # ...
+            Action = {}
+            Action['Time'] = disp_time
+            Action['Type'] = 'display_time_simulation'
+            Action['Args'] = {}
+            Actions.append(Action)
     # ...
     # Loop for all the regulations
     for reg in list(Simulation["Regulations"]):
@@ -271,19 +275,32 @@ def initialize_actions(Simulation):
                         new_speed = timeframe['parameters']['speed']
                     new_capacity = base_capacity
                     if timeframe['parameters']['increase_capacity']:
-                        new_capacity = base_capacity * (1+timeframe['parameters']['increase_capacity'])
+                        new_capacity = base_capacity * \
+                            (1+timeframe['parameters']['increase_capacity'])
                     # ...
                     # Action creation
                     Action = {}
                     Action['Time'] = timeframe['start']
                     Action['Type'] = 'speed_limit'
                     Action['Args'] = {
-                        'LinkID' : concerned_link,
-                        'Speed' : new_speed,
-                        'Capacity' : new_capacity,
-                        'Display' : True
-                        }
+                        'LinkID': concerned_link,
+                        'Speed': new_speed,
+                        'Capacity': new_capacity,
+                        'Display': True
+                    }
                     Actions.append(Action)
+        # ...
+        # Custom
+        if Regulation['Type'] == 'custom':
+            function_to_call = Regulation['Args']['FunctionToCall']
+            for time in Regulation['Args']['Times']:
+                Actions.append({
+                    'Time': time,
+                    'Type': 'custom',
+                    'Args': {
+                        'FunctionToCall': function_to_call
+                    }
+                })
     # ...
     # Sort actions
     Actions = sortActionsByTime(Actions)
