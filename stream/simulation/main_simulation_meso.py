@@ -139,8 +139,19 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
     if NextAction['Type'] == 'speed_limit':
         Args = NextAction['Args']
         concerned_link = Args['LinkID']
+        # ...
+        # Keep track of changes
+        if 'Changes' not in S['Links'][concerned_link]:
+            S['Links'][concerned_link]['Changes'] = {
+                'Speed' : {'Times' : [], 'Values' : []},
+                'Capacity' : {'Times' : [], 'Values' : []}
+            }
         S['Links'][concerned_link]['Speed'] = Args['Speed']
         S['Links'][concerned_link]['Capacity'] = Args['Capacity']
+        S['Links'][concerned_link]['Changes']['Speed']['Times'].append(NextAction['Time'])
+        S['Links'][concerned_link]['Changes']['Capacity']['Times'].append(NextAction['Time'])
+        S['Links'][concerned_link]['Changes']['Speed']['Values'].append(Args['Speed'])
+        S['Links'][concerned_link]['Changes']['Capacity']['Values'].append(Args['Capacity'])
         # ...
         if NextAction['Args']['Display']:
             print(
@@ -195,8 +206,8 @@ def tackle_vehicle_event(S, ListEvents, NextEvent):
     # - (c) Computation -
     S["General"]["Computation"]["NumEvent"] = S["General"]["Computation"]["NumEvent"] + 1
     # Computational TIME... TODO
-    S["General"]["Computation"]["NodeEvent"] = np.concatenate(
-        (S["General"]["Computation"]["NodeEvent"], np.array([NextEvent["Node"]])))
+    # S["General"]["Computation"]["NodeEvent"] = np.concatenate(
+    #     (S["General"]["Computation"]["NodeEvent"], np.array([NextEvent["Node"]])))
 
     # --- Update the list of events
     if 'Signals' in S.keys():
