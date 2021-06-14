@@ -1,4 +1,7 @@
+import os
+os.environ['NUMPY_EXPERIMENTAL_ARRAY_FUNCTION'] = '0'
 import numpy as np
+
 import random
 
 
@@ -203,7 +206,7 @@ def tackle_vehicle_event(S, ListEvents, NextEvent):
         S["Vehicles"][NextEvent["VehID"]]["RealPath"].append(
             S["Nodes"][NextEvent["Node"]]["OutgoingLinksID"][NextEvent["NextLink"]])
 
-    # - (c) Computation -
+    # - (c) Computation - DEGUB
     S["General"]["Computation"]["NumEvent"] = S["General"]["Computation"]["NumEvent"] + 1
     # Computational TIME... TODO
     # S["General"]["Computation"]["NodeEvent"] = np.concatenate(
@@ -371,8 +374,9 @@ def next_passage_time(Nodes, NodeID, NextArrivals, NextSupplyTimes, Signals):
             # --- maximum between demand and supplies (un and down)
             # effective out, independant from FIFO or not
             out_eff = int(NextArrivals["LinkIndex"][IN, out])
-            NextPassageTime[IN, out] = np.max(np.hstack((np.array(
-                NextArrivals["Time"][IN, out]), NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff])))
+            NextPassageTime[IN, out] = max([NextArrivals["Time"][IN, out], NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff]])
+            #np.max(np.hstack((np.array(
+            #    NextArrivals["Time"][IN, out]), NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff])))
 
             # -- Effect of traffic signal
             # If signals has been set for this node
