@@ -327,14 +327,16 @@ def recalculateAlphaOD(node, Links):
 
 
 def sortActionsByTime(Actions):
-    actionsArray = np.zeros(len(Actions))
-    for i, action in enumerate(Actions):
-        actionsArray[i] = action["Time"]
-        sortedIndexes = np.argsort(actionsArray)
-    # ...
-    # sorting
-    newActions = []
-    for i in range(len(sortedIndexes)):
-        newActions.append(Actions[sortedIndexes[i]])
-    Actions = newActions
+    if len(Actions) != 0:
+        actionsArray = np.zeros(len(Actions))
+        for i, action in enumerate(Actions):
+            actionsArray[i] = action["Time"]
+            sortedIndexes = np.argsort(actionsArray)
+        # ...
+        # sorting
+        newActions = []
+        for i in range(len(sortedIndexes)):
+            newActions.append(Actions[sortedIndexes[i]])
+        Actions = newActions
+        
     return Actions
