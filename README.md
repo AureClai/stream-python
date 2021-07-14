@@ -1,3 +1,5 @@
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+[![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
 
 <p align="center">
@@ -13,14 +15,19 @@ _Read this in other languages:_ _[English](https://github.com/AureClai/stream-py
 
 ## Sommaire
 
-- [Qu'est ce que Stream ?](#qu'est-ce-que-stream)
-- [Principales fonctionnalités](#principales-fonctionnalites)
+- [Sommaire](#sommaire)
+- [Qu'est ce que Stream ?](#quest-ce-que-stream-)
+- [Principales fonctionnalités](#principales-fonctionnalités)
 - [Contact](#contact)
 - [Installation](#installation)
+  - [1. Cloner le répertoire](#1-cloner-le-répertoire)
+  - [2. _(facultatif)_ Changer de branche (si développement sur autre branche que _master_)](#2-facultatif-changer-de-branche-si-développement-sur-autre-branche-que-master)
+  - [3. Installer](#3-installer)
 - [Utilisation](#utilisation)
   - [Utilisation en ligne de commande](#utilisation-en-ligne-de-commande)
-  - [Utilisation dans des scripts](#Utilisation-dans-des-scripts)
-  - [Utiliser QStream pour concevoir des scénarios](#utiliser-qstream-pour-concevoir-des-scenarios)
+  - [Utilisation via un script python](#utilisation-via-un-script-python)
+  - [Utiliser QStream pour concevoir des scénarios](#utiliser-qstream-pour-concevoir-des-scénarios)
+  - [Exemple](#exemple)
 - [Bugs](#bugs)
 - [License](#license)
 - [TODO](#todo)
