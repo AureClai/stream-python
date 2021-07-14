@@ -1,4 +1,7 @@
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+[![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
+
 <p align="center">
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
@@ -12,8 +15,9 @@ _Read this in other languages:_ _[French](https://github.com/AureClai/stream-pyt
 
 ## Table of Contents
 
-- [What is Stream ?](#what-is-stream)
-- [Main features](#main-features)
+- [Table of Contents](#table-of-contents)
+- [What is Stream ?](#what-is-stream-)
+- [Main Features](#main-features)
 - [Contact](#contact)
 - [Installation](#installation)
 - [Use](#use)
