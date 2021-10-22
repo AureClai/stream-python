@@ -88,8 +88,8 @@ $ pip install .
 ### Utilisation en ligne de commande
 
 ```
-$ cd path_to_input_ny/
-$ python -m file_of_inputs.npy
+$ cd path_to_input_npy/
+$ python -m stream file_of_inputs.npy
 ```
 
 A partir d'ici, un nouveau dossier `result` a été créé avec les résultats de la simulation associés à la date et l'heure au format `.npy`.
