@@ -1,6 +1,7 @@
 # IMPORTS
 import copy
 import numpy as np
+import sys
 
 from .validate_and_complete_scenario import update_link_DF
 
@@ -10,6 +11,12 @@ def initialize_simulation(Simulation):  # , User):
     '''Main function'''
     # ...
     #Links, Nodes, VehicleClass, General, Entries, Exits, Routes, Periods = inputs_to_variables(Inputs)
+    # ...
+    # ---- (4) Initialization of regulations
+    Simulation = initialize_regulations(Simulation)
+    # ...
+    # ---- (5) Add action
+    Simulation = initialize_actions(Simulation)
     # ...
     # ---- (1) Initialisation of the dynamic variables of nodes and links
     Simulation["Events"] = initial_Events(
@@ -21,12 +28,7 @@ def initialize_simulation(Simulation):  # , User):
     # ...
     # --- (3) Initialization of the actualization times in the simulation
     Simulation["General"] = complete_general(Simulation["General"])
-    # ...
-    # ---- (4) Initialization of regulations
-    Simulation = initialize_regulations(Simulation)
-    # ...
-    # ---- (5) Add action
-    Simulation = initialize_actions(Simulation)
+
     # ...
     del Simulation["tmp"]
     return (Simulation)
@@ -70,8 +72,8 @@ def initial_Events(Nodes, Links):
             VehiclesNum = 1 + np.floor(np.max(np.array([Links[link]["Length"] for link in Nodes[node]["OutgoingLinksID"]]) * np.array(
                 [Links[link]["NumLanes"] for link in Nodes[node]["OutgoingLinksID"]]) * [Links[link]["FD"]["kx"] for link in Nodes[node]["OutgoingLinksID"]]))
         VehiclesNum = max([VehiclesNum, 1])
-        OutgoingLinksNum = 1 + Nodes[node]["NumOutgoingLinks"]
-        IncomingLinksNum = 1 + Nodes[node]["NumIncomingLinks"]
+        OutgoingLinksNum = Nodes[node]["NumOutgoingLinks"] + 1
+        IncomingLinksNum = Nodes[node]["NumIncomingLinks"] + 1
         SupplyTimes = {}
         SupplyTimes["Downstream"] = -np.inf * \
             np.ones([int(VehiclesNum), int(OutgoingLinksNum)])
@@ -121,7 +123,7 @@ def initialize_regulations(Simulation):
     for reg in list(Simulation["Regulations"]):
         Regulation = Simulation["Regulations"][reg]
         # ...
-        # Adapt the simulation with a managed Lane
+        # Adapt the simulation with a managed Lane 
         if Regulation['Type'] == 'managed_lane':
             # ...
             # IF "Links_HOL" is not set in the regulation dict.
@@ -130,8 +132,7 @@ def initialize_regulations(Simulation):
                 for managedLaneLink in Regulation['Args']['Links']:
                     # Creation of a new link
                     newLinkID = max(list(Simulation["Links"]))+1
-                    newLink = copy.deepcopy(
-                        Simulation["Links"][managedLaneLink])
+                    newLink = copy.deepcopy(Simulation["Links"][managedLaneLink])
                     newLink["NumLanes"] = 1
                     Simulation["Links"].update({newLinkID: newLink})
                     if "Capacity" in list(Regulation['Args'].keys()):
@@ -139,7 +140,7 @@ def initialize_regulations(Simulation):
                         update_link_DF(Simulation["Links"], newLinkID)
                     else:
                         Simulation["Links"][newLinkID]["Capacity"] = Simulation["Links"][managedLaneLink]["FD"]["C"]
-
+    
                     # ...
                     # Modify the existing link
                     NumLanes = Simulation["Links"][managedLaneLink]['NumLanes']
@@ -147,7 +148,7 @@ def initialize_regulations(Simulation):
                     LaneProbability = [ratio1, 1-ratio1]
                     LaneProbabilities = [LaneProbability for vehclass in list(
                         Simulation['VehicleClass'])]
-
+    
                     # Capacity
                     if "Capacity" in list(Regulation['Args'].keys()):
                         cap = NumLanes * \
@@ -156,7 +157,7 @@ def initialize_regulations(Simulation):
                     else:
                         cap = (NumLanes-1) * \
                             Simulation["Links"][managedLaneLink]["FD"]["C"]
-
+    
                     Simulation["Links"][managedLaneLink].update({
                         'AssociatedLink': newLinkID,
                         'LaneProbabilities': LaneProbabilities,
@@ -164,7 +165,7 @@ def initialize_regulations(Simulation):
                         'Capacity': cap
                     })
                     update_link_DF(Simulation["Links"], managedLaneLink)
-
+    
                     # ...
                     # Modify the nodes
                     nodeup = Simulation["Links"][managedLaneLink]["NodeUpID"]
@@ -177,11 +178,11 @@ def initialize_regulations(Simulation):
                         Simulation["Nodes"][nodedown]["IncomingLinksID"], np.array([newLinkID])))
                     Simulation["Nodes"][nodedown]["NumIncomingLinks"] += 1
                     Simulation["Nodes"][nodedown]["CapacityDrop"] = np.array([0.] *
-                                                                             (Simulation["Nodes"][nodedown]["NumIncomingLinks"] + 1))
+                                                                             (Simulation["Nodes"][nodedown]["NumIncomingLinks"]))
                     Simulation["Nodes"][nodedown].update(recalculateAlphaOD(
                         Simulation["Nodes"][nodedown], Simulation["Links"]))
             # ...
-            # if "Links_HOL" is not set in the regulation dict
+            # if "Links_HOL" is set in the regulation dict
             else:
                 for index, managedLaneLinkID in enumerate(Regulation['Args']['Links']):
                     # ...
@@ -191,23 +192,25 @@ def initialize_regulations(Simulation):
                     associated_link = Simulation['Links'][associated_link_id]
                     # 'LaneProbabilities' : initialisation same probability for all vehicles
                     managed_link = Simulation['Links'][managedLaneLinkID]
-                    ratio_nb_lanes = managed_link['NumLanes'] / (
-                        managed_link['NumLanes'] + associated_link['NumLanes'])
+                    ratio_nb_lanes = managed_link['NumLanes'] / (managed_link['NumLanes'] + associated_link['NumLanes'])
                     lane_probability = [ratio_nb_lanes, 1 - ratio_nb_lanes]
-                    lane_probabilities = [
-                        lane_probability for vehclass in list(Simulation['VehicleClass'])]
+                    lane_probabilities = [lane_probability for vehclass in list(Simulation['VehicleClass'])]
+                    # ...
+                    nodedown = managed_link['NodeDownID']
                     # ...
                     # Update the link
                     Simulation["Links"][managedLaneLinkID].update({
-                        'AssociatedLink': associated_link_id,
-                        'LaneProbabilities': lane_probabilities,
+                    'AssociatedLink': associated_link_id,
+                    'LaneProbabilities': lane_probabilities,
                     })
-
+                    Simulation["Nodes"][nodedown].update(recalculateAlphaOD(
+                        Simulation["Nodes"][nodedown], Simulation["Links"]))
+                
         # ...
         # Adapt the simulation with a dynamic_speed_adaptation
         if Regulation['Type'] == 'dynamic_speed_adaptation':
             pass
-
+            
     # ...
     return Simulation
 
@@ -275,32 +278,62 @@ def initialize_actions(Simulation):
                         new_speed = timeframe['parameters']['speed']
                     new_capacity = base_capacity
                     if timeframe['parameters']['increase_capacity']:
-                        new_capacity = base_capacity * \
-                            (1+timeframe['parameters']['increase_capacity'])
+                        new_capacity = base_capacity * (1+timeframe['parameters']['increase_capacity'])
                     # ...
                     # Action creation
                     Action = {}
                     Action['Time'] = timeframe['start']
                     Action['Type'] = 'speed_limit'
                     Action['Args'] = {
-                        'LinkID': concerned_link,
-                        'Speed': new_speed,
-                        'Capacity': new_capacity,
-                        'Display': True
-                    }
+                        'LinkID' : concerned_link,
+                        'Speed' : new_speed,
+                        'Capacity' : new_capacity,
+                        'Display' : True
+                        }
                     Actions.append(Action)
+        # ...
+        # Exit Supply
+        if Regulation['Type'] == 'exit_supply':
+            if len(Regulation['Args']['Links']) != 1:
+                sys.exit("Only one link has to be specified for regulations of type exit_capacity")
+            
+            concerned_link = Regulation['Args']['Links'][0]
+            down_node = Simulation['Links'][concerned_link]['NodeDownID']
+            baseCapacity = Simulation['Nodes'][down_node]['CapacityForced']
+            for timeframe in Regulation['Args']['timeframes']:
+                #...
+                # Limit the actions to the SimulationDuration range
+                if timeframe['start']==None:
+                    timeframe['start'] = 0
+                if timeframe['start'] >= Simulation['General']['SimulationDuration'][1]:
+                    continue 
+                if timeframe['parameters']['exit_capacity']==None:
+                    capacity = baseCapacity
+                else:
+                    capacity = timeframe['parameters']['exit_capacity']
+                #...
+                # Action Creation
+                Action = {}
+                Action['Time'] = timeframe['start']
+                Action['Type'] = 'exit_supply'
+                Action['Args'] = {
+                    'LinkID' : concerned_link,
+                    'CapacityForced' : capacity,
+                    'Display' : True
+                    }
+                Actions.append(Action)
         # ...
         # Custom
         if Regulation['Type'] == 'custom':
             function_to_call = Regulation['Args']['FunctionToCall']
             for time in Regulation['Args']['Times']:
                 Actions.append({
-                    'Time': time,
-                    'Type': 'custom',
-                    'Args': {
-                        'FunctionToCall': function_to_call
-                    }
-                })
+                    'Time' : time,
+                    'Type' : 'custom',
+                    'Args' : {
+                        'FunctionToCall' : function_to_call
+                        }
+                    })
     # ...
     # Sort actions
     Actions = sortActionsByTime(Actions)
@@ -327,16 +360,15 @@ def recalculateAlphaOD(node, Links):
 
 
 def sortActionsByTime(Actions):
-    if len(Actions) != 0:
-        actionsArray = np.zeros(len(Actions))
-        for i, action in enumerate(Actions):
-            actionsArray[i] = action["Time"]
-            sortedIndexes = np.argsort(actionsArray)
-        # ...
-        # sorting
-        newActions = []
-        for i in range(len(sortedIndexes)):
-            newActions.append(Actions[sortedIndexes[i]])
-        Actions = newActions
-        
+    actionsArray = np.zeros(len(Actions))
+    sortedIndexes = []
+    for i, action in enumerate(Actions):
+        actionsArray[i] = action["Time"]
+        sortedIndexes = np.argsort(actionsArray)
+    # ...
+    # sorting
+    newActions = []
+    for i in range(len(sortedIndexes)):
+        newActions.append(Actions[sortedIndexes[i]])
+    Actions = newActions
     return Actions

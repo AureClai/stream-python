@@ -160,6 +160,24 @@ def tackle_action(S, ListActions, NextAction, disp='time'):
             print(
                 f"@Stream[{NextAction['Time']}] : adpatating the speed for link {concerned_link} : Speed {Args['Speed']} and Capacity {Args['Capacity']}")
     # ...
+    if NextAction['Type'] == 'exit_supply':
+        Args = NextAction['Args']
+        concerned_link = Args['LinkID']
+        down_node = S['Links'][concerned_link]['NodeDownID']
+        # ...
+        # Keep track of changes
+        if 'Changes' not in S['Nodes'][down_node]:
+            S['Nodes'][down_node]['Changes'] = {
+                'CapacityForced' : {'Times' : [], 'Values' : []},
+            }
+        S['Nodes'][down_node]['CapacityForced'] = Args['CapacityForced']
+        S['Nodes'][down_node]['Changes']['CapacityForced']['Times'].append(NextAction['Time'])
+        S['Nodes'][down_node]['Changes']['CapacityForced']['Values'].append(Args['CapacityForced'])
+        # ...
+        if NextAction['Args']['Display']:
+            print(
+                f"@Stream[{NextAction['Time']}] : adpatating the exit supply of node {down_node} : {Args['CapacityForced']}")
+    # ...
     if NextAction['Type'] == 'custom':
         func = NextAction['Args']['FunctionToCall']
         print(
@@ -413,6 +431,9 @@ def select_next_event(Nodes, NodeID, General, NextArrivals, NextPassageTime, Nex
     inNext, outNext = np.where(NextPassageTime == PassageTimeMinimum)
 
     # --- Conservation of unique in-candidats
+    # dans le cas des noeuds non FIFO, on peut avoir plusieurs candidats
+    # pour chaque lien entrant. On n'en conserve qu'un seul : par défaut le
+    # premier.
     _, in_selected = np.unique(inNext, return_index=True)
     inNext = inNext[in_selected]
     outNext = outNext[in_selected]
@@ -501,8 +522,10 @@ def execute_and_update_event(Links, Exits, Nodes, General, Vehicles, VehicleClas
     else:
         # If NodeID is an entry node or an internal node : the capacity
         # depends on the capacity of the downstream link
-        Capacity = (1 - Nodes[NodeID]["CapacityDrop"][IN]) * \
-            Links[Nodes[NodeID]["OutgoingLinksID"][out]]["Capacity"]
+        if len(Nodes[NodeID]["IncomingLinksID"])>0:
+            Capacity = Links[Nodes[NodeID]["OutgoingLinksID"][out]]["Capacity"] - Nodes[NodeID]["CapacityDrop"][IN] * Links[Nodes[NodeID]["IncomingLinksID"][IN]]["Capacity"]
+        else:
+            Capacity = Links[Nodes[NodeID]["OutgoingLinksID"][out]]["Capacity"]
         h_down = 1/Capacity
         # s'il y a une valeur de Capacity Forced indique au noeud, alors elle s'applique
         if Nodes[NodeID]["CapacityForced"] < np.inf:

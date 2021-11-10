@@ -9,6 +9,13 @@ def getMatrix(sce): #scr = scenario dictionnary
     coresp = {}
     icoresp = {}
     count = 0
+
+    # Filter if links is associated with another
+    links_filtered = {}
+    for link in sce['Links']:
+        if sce['Links'][link]['AssociatedLink']==None:
+            links_filtered[link] = sce['Links'][link]
+
     for node in list(sce["Nodes"].keys()):
         coresp.update({node : count})
         icoresp.update({count : node})
