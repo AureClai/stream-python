@@ -52,13 +52,13 @@ def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
             d_OP = d_O[np.where(d_O[:, 0] == per)[0], :]
             # Here the demand is for ONE origin and for ONE Period
             # Total number of vehicles
-            nTotal = sum(d_OP[:, 4])/3600 * duration
+            nTotal = int(round(sum(d_OP[:, 4])/3600 * duration))
             if nTotal == 0:
                 continue
             # Mean headway
             hMean = duration / nTotal
             currTime = start + hMean
-            while currTime <= start + duration:
+            for i in range(nTotal):
                 # Vehicle initialization
                 vehicle = {}
                 # information of vehicle
