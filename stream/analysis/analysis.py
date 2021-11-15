@@ -418,6 +418,22 @@ def plot_cvc_on_link( Statistics, ilink ):
     # ...
     return True
 
+def plot_ordered_cvc_on_link(Statistics, ilink):
+    '''Function to plot entry and exit cumulative count curves on a link'''
+    # ...
+    # Generate both y-axis
+    plt.figure()
+    plt.title("Cumulative count curves on link " + str(ilink))
+    plt.xlabel('Time [s]')
+    plt.ylabel('N curves [veh]')
+    # ...
+    plt.plot(Statistics[ilink]["DepartureTimes"], range(len(Statistics[ilink]["DepartureTimes"])))
+    plt.plot(np.sort(Statistics[ilink]["ArrivalTimes"]), range(len(Statistics[ilink]["ArrivalTimes"])))
+    # ...
+    plt.legend(['departures from link begining','arrivals to link end'])
+    # ...
+    return True
+
 
 def plot_mean_trajectories_on_link( Statistics, ilink ):
     '''Function to plot the mean vehicule trajectories on a link'''

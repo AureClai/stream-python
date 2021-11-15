@@ -13,6 +13,8 @@ import numpy as np
 import os
 import sys
 
+from .analysis import compute_travel_times_on_links
+
 #...
 # Functions
 #...
@@ -52,7 +54,7 @@ def calcCVCInter(CVCin, CVCout, x, L, u, w, kx):
 
     return np.maximum(CVCd, CVCo[1:-1])
 #...
-def calcXTOnLink(Simulation, link, dt, dx):
+def calcXTOnLink(TravelTimes, link, dt, dx):
     """
     Function to calculate the aggregated variables on a specified link
     """
@@ -71,17 +73,19 @@ def calcXTOnLink(Simulation, link, dt, dx):
     CVCout = np.array([])
     #...
     # in
-    linkIndex = np.where(Simulation["Nodes"][nodeInID]["OutgoingLinksID"] == link)[0][0]
-    CVCin = Simulation["Events"][nodeInID]["Exits"][linkIndex]["Time"]
-    CVCin.sort()
+    # linkIndex = np.where(Simulation["Nodes"][nodeInID]["OutgoingLinksID"] == link)[0][0]
+    # CVCin = Simulation["Events"][nodeInID]["Exits"][linkIndex]["Time"]
+    # CVCin.sort()
+    CVCin = TravelTimes[link]['DepartureTimes']
 
     #...
     # out
-    linkIndex = np.where(Simulation["Nodes"][nodeOutID]["IncomingLinksID"] == link)[0][0]
-    for _out in list(Simulation["Events"][nodeOutID]["Exits"]):
-        goodindixes = np.where( Simulation["Events"][nodeOutID]["Exits"][_out]["PreviousLinkID"] == linkIndex)[0]
-        CVCout = np.concatenate((CVCout, Simulation["Events"][nodeOutID]["Exits"][_out]["Time"][goodindixes]))
-    CVCout.sort()
+    # linkIndex = np.where(Simulation["Nodes"][nodeOutID]["IncomingLinksID"] == link)[0][0]
+    # for _out in list(Simulation["Events"][nodeOutID]["Exits"]):
+    #     goodindixes = np.where( Simulation["Events"][nodeOutID]["Exits"][_out]["PreviousLinkID"] == linkIndex)[0]
+    #     CVCout = np.concatenate((CVCout, Simulation["Events"][nodeOutID]["Exits"][_out]["Time"][goodindixes]))
+    # CVCout.sort()
+    CVCout = np.sort(TravelTimes[link]['ArrivalTimes'])
 
 
     #...
@@ -170,6 +174,7 @@ def calcXTOnAllLinks(Simulation, dx, dt):
     """
     #...
     # init
+    TravelTimes = compute_travel_times_on_links(Simulation)
     diagsXT = {}
     hasSubLinks = getWhoHasSub(Simulation)
     isSubLinks = getWhoIsSub(Simulation)
@@ -183,7 +188,7 @@ def calcXTOnAllLinks(Simulation, dx, dt):
         if link in isSubLinks:
             isMain = False
         #...
-        cellsT, cellsX, cellsQ, cellsK, cellsV, FD = calcXTOnLink(Simulation, link, dt, dx)
+        cellsT, cellsX, cellsQ, cellsK, cellsV, FD = calcXTOnLink(TravelTimes, link, dt, dx)
         diagsXT.update({link : {"X" : cellsX,
                                "T" : cellsT,
                                "Q" : cellsQ,
