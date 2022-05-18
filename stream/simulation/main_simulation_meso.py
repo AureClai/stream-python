@@ -31,14 +31,12 @@ def main_simulation_meso(S, T, disp='time'):
         # While their is still events on the network
 
         if NextEvent['Time'] < NextAction['Time']:
-            # Faire comme d'hab
-            # (modifier list et next)
+            # deals with the next vehicle passing through a node event
             ListEvents, NextEvent = tackle_vehicle_event(
                 S, ListEvents, NextEvent)
 
         else:
-            # gérer l'action
-            # (modifier liste action, next action)
+            # deals with the next action
             ListActions, NextAction = tackle_action(
                 S, ListActions, NextAction, disp=disp)
 
@@ -521,13 +519,14 @@ def execute_and_update_event(Links, Exits, Nodes, General, Vehicles, VehicleClas
     h_up = h_up * General["Peloton"]
     Event_NodeID["SupplyTimes"]["UpCapacity"][IN] = current_time + h_up
 
-    # --- future constraint for the vehicle "veh+dn" at the node
+    # --- initialisation of the future constraint for the vehicle "veh+dn" at the node
+    # to -inf. It will be changed in (4) when the current vehicle will pass through the next node
     if out < Nodes[NodeID]["NumOutgoingLinks"]:
         # there is a downstream link: this vehicle "veh" is a constraint for
         # vehicle "veh + dn" at the current node, until it leaves the link
         # ID of the incoming link
         LinkDownUpID = Nodes[NodeID]["OutgoingLinksID"][out]
-        # --- calculation of the next supply yime at the current node
+        # --- calculation of the next supply time at the current node
         dn = Links[LinkDownUpID]["Length"] * \
             Links[LinkDownUpID]["NumLanes"] * Links[LinkDownUpID]["FD"]["kx"]
         if (dn / General["Peloton"]) != np.floor(dn / General["Peloton"]):
