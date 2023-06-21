@@ -1,28 +1,12 @@
 from .main import run_simulation
 import os
+import argparse
+import sys
+
+from .main import main
+
+# Changing to an AutoFlushStream to be used in the GUI
 
 
-def main(args):
-    if len(args) == 0:
-        sys.exit("You must specify scenario files in NPY format...")
-        input()
-    else:
-        for arg in args:
-            if arg.split('.')[-1] == 'npy':
-                exists = os.path.isfile(arg)
-                if exists:
-                    run_simulation(arg)
-                else:
-                    print(arg + " does not exists.")
-                    input()
-                    continue
-            else:
-                print(arg + "do not have the correct extension.")
-                input()
-                continue
-
-
-# If stream is called from command line
-if __name__ == '__main__':
-    import sys
-    main(sys.argv[1:])
+if __name__ == "__main__":
+    main()

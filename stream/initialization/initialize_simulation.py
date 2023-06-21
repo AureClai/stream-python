@@ -6,7 +6,7 @@ from .validate_and_complete_scenario import update_link_DF
 
 
 def initialize_simulation(Simulation):  # , User):
-    print("Original initialization...")
+    print("Original initialization...", flush=True)
     '''Main function'''
     # ...
     #Links, Nodes, VehicleClass, General, Entries, Exits, Routes, Periods = inputs_to_variables(Inputs)

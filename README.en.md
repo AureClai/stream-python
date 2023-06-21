@@ -6,102 +6,109 @@
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
 
-<h1 align="center">Mesoscopic event-based open-source traffic simulator</h1>
+<h1 align="center">Event-Based Mesoscopic Traffic Simulator</h1>
 
-This repository is based on a fork from a project from the [Cerema](https://cerema.fr).
-https://gitlab.cerema.fr/Stream/stream-python
+_Read this in other languages:_ _[Français](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
 
-_Read this in other languages:_ _[French](https://github.com/AureClai/stream-python/blob/master/README.md)_
+## What is Stream?
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [What is Stream ?](#what-is-stream-)
-- [Main Features](#main-features)
-- [Contact](#contact)
-- [Installation](#installation)
-- [Use](#use)
-  - [Use in command line](#use-in-command-line)
-  - [Use in scripts](#use-in-scripts)
-  - [Use QStream for scenario design](#use-qstream-for-scenario-design)
-- [Bugs](#bugs)
-- [License](#license)
-- [TODO](#todo)
-
-## What is Stream ?
-
-Stream is mesoscopic road traffic simulation tool, that is that the scale of resolution is an intermediary to the microscopic and macroscopic scales. It processes vehicles instead of flows. It only calculates the passing times of the vehicles at the nodes of the network instead of calculating every position with a fixed time step. The pros of this method of resolution are that (i) the calculatation times are less than with a microscopic resolution, (ii) a smaller number of parameters with a clear physical sens easing the calibration of the model compared to the microscopic, (iii) a great diversity of applications with less restrictions than the macroscopic resolution.
+Stream is a mesoscopic traffic simulation tool, that is, a tool whose level of resolution is intermediate between microscopic and macroscopic levels. It also considers vehicles rather than a flow, but merely calculates the passing times of vehicles at the nodes of the road network, rather than calculating all its positions at fixed time steps.
+The advantages of this resolution method are (i) reduced computing times compared to microscopic, (ii) a reduced number of parameters with clear physical meaning facilitating the parameterization process compared to microscopic, (iii) a wide diversity of use cases far less restrictive than the macroscopic one.
 
 ## Main Features
 
-1. Scenario reading from `.npy` file
-2. Shortest path affectation
-3. Mesoscopic event-based Simulation
-4. Managed lane regulation implementation
+- Event-based mesoscopic calculation core
+- Upstream and shortest path **static** assignment
+- Limited management \* of different vehicle classes
+- Complex node management
+- Traffic light intersection management
+- Specific lane management (reserved and auxiliary lanes)
+- Dynamic regulation during simulation
 
 ## Contact
 
-aurelien.clairais@cerema.fr
+The main contribution is made by the Cerema East-Central Department. If you have any questions, please send an email to the following address: aurelien.clairais@cerema.fr
 
 ## Installation
 
-Stream works well with [Anaconda](https://www.anaconda.com/distribution/) for Python 3.7.
-With Anaconda, the use of [virtual environnments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended :
+Stream works under [Anaconda](https://www.anaconda.com/distribution/) for Python 3.9.
+With Anaconda, the use of [virtual environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended:
 
-```
+\```console
 $ conda create --name myenv
 $ conda activate myenv
-```
+\```
 
-The installation is made via clonning the directory followed by an installation with `pip` :
+The installation is done via cloning the directory followed by installing the package with `pip`.
 
-```console
+### 1. Clone the Directory
+
+\```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
+\```
+
+### 2. _(optional)_ Switch Branch (if developing on a branch other than _master_)
+
+\```console
+$ git checkout the_branch
+\```
+
+### 3. Install
+
+\```console
 $ pip install .
-```
+\```
 
-## Use
+## Usage
 
-### Use in command line
+### Command Line Usage
 
-For this version : **test only with the provided examples** in `example`directory.
+\```console
+$ stream -i file_of_inputs.npy
+\```
 
-```
-$ cd path_to_example_directory/
-$ python -m stream inputs.npy
-```
+From here, a new `result` folder has been created in the folder containing the input file with the simulation results associated with the date and time in `.npy` format. If a results folder has been pointed (see `stream --help` on command line), the results will be saved in this folder.
 
-From now, a new directory `result` has been created with the result of the simulation with date and time with the `.npy` extension.
+### Usage via a Python Script
 
-### Use in scripts
+\```python
+from stream.main import run_simulation_from_inputs
+import numpy as np
 
-Import the functions and use it (see source code and/or documentation).
+# Import the input file
+Inputs = np.load("path_to_the_inputs_file.npy", allow_pickle=True).item()
+Simulation = run_simulation_from_inputs(Inputs)
+\```
 
-TODO : write the documentation for use in scripts
+Here, the results are created in the form of a dictionary in the `Simulation` variable.
 
-### Use QStream for scenario design
+### Usage via the Graphic Interface
 
-(**Windows Only**)
+\```console
+$ stream-gui
+\```
 
-The QGIS plugin at https://gitlab.cerema.fr/Stream/qstream (**Windows Only**) provides :
+## Use QStream to Design Scenarios
 
-- Scenario definition
-- Analysis features
+The QGIS extension https://gitlab.cerema.fr/Stream/qstream allows:
+
+- scenario definition
+- analysis features
 
 ## Bugs
 
-No known bugs. Please write an issue if you see anything.
+No known bugs. If you witness a bug, please open an ["_issue_"](https://github.com/AureClai/stream-python/issues/new).
 
 ## License
 
-[Cecill-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-fr.html).
+[Cecill-B](http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html).
 
 ## TODO
 
-1. Implement `bokeh`-based dashboard for result analysis
-2. Variable flows at exits
-3. Moddable affectation module
-4. Dynamical Speed Regulation
-5. On-ramp regulation
-6. Other format for in and out (JSON, XML, etc...)
+1. Implementation of visualization tools with the Python `dash` library from Plotly
+2. Management of variable output capacity
+3. Several assignment modes
+4. Dynamic speed regulation
+5. Access regulation
+6. Management of other types of input/output formats

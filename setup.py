@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="stream",
-    version="3.2.1",
+    version="3.2.2",
     author="CEREMA",
     author_email="aurelien.clairais@cerema.fr",
     description="A mesoscopic event-base open-source traffic simulation tool",
@@ -18,11 +18,19 @@ setuptools.setup(
         "License :: Cecill-B",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.9',
     install_requires=[
         'numpy',
         'pandas',
         'matplotlib',
-        'scipy'
+        'scipy',
+        'pyqt6'
     ],
+    py_modules=['stream','stream_gui'],
+    entry_points={
+        'console_scripts': [
+            'stream-gui = stream_gui:main',
+            'stream = stream:main',
+        ]
+    }
 )

@@ -6,31 +6,9 @@
   <img src="https://github.com/AureClai/stream-python/blob/master/img/logo_plus_name.png" width=256 height=256/>
 </p>
 
-<h1 align="center">Simulateur de trafic mésoscopique événementiel open-source</h1>
-
-Ce dossier est basé sur un _fork_ d'un projet du [Cerema](https://cerema.fr)
-https://gitlab.cerema.fr/Stream/stream-python
+<h1 align="center">Simulateur de trafic mésoscopique événementiel</h1>
 
 _Read this in other languages:_ _[English](https://github.com/AureClai/stream-python/blob/master/README.en.md)_
-
-## Sommaire
-
-- [Sommaire](#sommaire)
-- [Qu'est ce que Stream ?](#quest-ce-que-stream-)
-- [Principales fonctionnalités](#principales-fonctionnalités)
-- [Contact](#contact)
-- [Installation](#installation)
-  - [1. Cloner le répertoire](#1-cloner-le-répertoire)
-  - [2. _(facultatif)_ Changer de branche (si développement sur autre branche que _master_)](#2-facultatif-changer-de-branche-si-développement-sur-autre-branche-que-master)
-  - [3. Installer](#3-installer)
-- [Utilisation](#utilisation)
-  - [Utilisation en ligne de commande](#utilisation-en-ligne-de-commande)
-  - [Utilisation via un script python](#utilisation-via-un-script-python)
-  - [Utiliser QStream pour concevoir des scénarios](#utiliser-qstream-pour-concevoir-des-scénarios)
-  - [Exemple](#exemple)
-- [Bugs](#bugs)
-- [License](#license)
-- [TODO](#todo)
 
 ## Qu'est ce que Stream ?
 
@@ -54,7 +32,7 @@ aurelien.clairais@cerema.fr
 
 ## Installation
 
-Stream est fonctionnel sous [Anaconda](https://www.anaconda.com/distribution/) pour Python 3.7.
+Stream est fonctionnel sous [Anaconda](https://www.anaconda.com/distribution/) pour Python 3.9.
 Avec Anaconda, l'utilisation d'[environments virtuels](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) est recommandé :
 
 ```
@@ -88,11 +66,11 @@ $ pip install .
 ### Utilisation en ligne de commande
 
 ```
-$ cd path_to_input_npy/
-$ python -m stream file_of_inputs.npy
+$ stream -i file_of_inputs.npy
 ```
 
-A partir d'ici, un nouveau dossier `result` a été créé avec les résultats de la simulation associés à la date et l'heure au format `.npy`.
+A partir d'ici, un nouveau dossier `result` a été créé dans le dossier contenant le fichier d'entréeavec les résultats de la simulation associés à la date et l'heure au format `.npy`.
+Si un dossier de résultats a été pointé (cf. `stream --help` en ligne de commande), les résultats seront enregistrés dans ce dossier.
 
 ### Utilisation via un script python
 
@@ -107,32 +85,18 @@ Simulation = run_simulation_from_inputs(Inputs)
 
 Ici, les résultats sont créé sous la forme d'un dictionnaire dans la variable `Simulation`.
 
-### Utiliser QStream pour concevoir des scénarios
+### Utilisation via l'interface graphique
+
+```
+$ stream-gui
+```
+
+## Utiliser QStream pour concevoir des scénarios
 
 L'extension QGIS https://gitlab.cerema.fr/Stream/qstream permet :
 
 - la définiton de scénarios
 - des fonctionnalités d'analyse
-
-### Exemple
-
-Pour lancer le fichier d'exemple dans le dossier `stream-python` via la console de commande :
-
-```console
-$ cd example
-$ python -m inputs.npy
-```
-
-ou via un script Python :
-
-```python
-from stream.main import run_simulation_from_inputs
-import numpy as np
-
-# Importer le fichier d'entrées
-Inputs = np.load("inputs.npy", allow_pickle=True).item()
-Simulation = run_simulation_from_inputs(Inputs)
-```
 
 ## Bugs
 

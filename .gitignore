@@ -128,3 +128,5 @@ dmypy.json
 test_not_tracked/
 example/results/
 *.csv
+
+.vscode/
