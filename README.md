@@ -1,3 +1,5 @@
+_[:us:](https://github.com/AureClai/stream-python/blob/master/README.md)_ _[:fr:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_ _[:es:](https://github.com/AureClai/stream-python/blob/master/README.es.md)_ _[:cn:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
+
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
@@ -8,7 +10,7 @@
 
 <h1 align="center">Event-Based Mesoscopic Traffic Simulator</h1>
 
-_Read this in other languages:_ _[Français](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
+_Read this in :_ _[:us:](https://github.com/AureClai/stream-python/blob/master/README.md)_ _[:fr:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_ _[:es:](https://github.com/AureClai/stream-python/blob/master/README.es.md)_ _[:cn:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
 
 ## What is Stream?
 
@@ -19,7 +21,7 @@ The advantages of this resolution method are (i) reduced computing times compare
 
 - Event-based mesoscopic calculation core
 - Upstream and shortest path **static** assignment
-- Limited management \* of different vehicle classes
+- Limited management * of different vehicle classes
 - Complex node management
 - Traffic light intersection management
 - Specific lane management (reserved and auxiliary lanes)
@@ -34,60 +36,60 @@ The main contribution is made by the Cerema East-Central Department. If you have
 Stream works under [Anaconda](https://www.anaconda.com/distribution/) for Python 3.9.
 With Anaconda, the use of [virtual environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended:
 
-\```console
+```console
 $ conda create --name myenv
 $ conda activate myenv
-\```
+```
 
 The installation is done via cloning the directory followed by installing the package with `pip`.
 
 ### 1. Clone the Directory
 
-\```console
+```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
-\```
+```
 
 ### 2. _(optional)_ Switch Branch (if developing on a branch other than _master_)
 
-\```console
+```console
 $ git checkout the_branch
-\```
+```
 
 ### 3. Install
 
-\```console
+```console
 $ pip install .
-\```
+```
 
 ## Usage
 
 ### Command Line Usage
 
-\```console
+```console
 $ stream -i file_of_inputs.npy
-\```
+```
 
 From here, a new `result` folder has been created in the folder containing the input file with the simulation results associated with the date and time in `.npy` format. If a results folder has been pointed (see `stream --help` on command line), the results will be saved in this folder.
 
 ### Usage via a Python Script
 
-\```python
+```python
 from stream.main import run_simulation_from_inputs
 import numpy as np
 
 # Import the input file
 Inputs = np.load("path_to_the_inputs_file.npy", allow_pickle=True).item()
 Simulation = run_simulation_from_inputs(Inputs)
-\```
+```
 
 Here, the results are created in the form of a dictionary in the `Simulation` variable.
 
 ### Usage via the Graphic Interface
 
-\```console
+```console
 $ stream-gui
-\```
+```
 
 ## Use QStream to Design Scenarios
 

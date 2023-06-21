@@ -1,3 +1,5 @@
+_[:us:](https://github.com/AureClai/stream-python/blob/master/README.md)_ _[:fr:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_ _[:es:](https://github.com/AureClai/stream-python/blob/master/README.es.md)_ _[:cn:](https://github.com/AureClai/stream-python/blob/master/README.fr.md)_
+
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
@@ -7,8 +9,6 @@
 </p>
 
 <h1 align="center">Simulateur de trafic mésoscopique événementiel</h1>
-
-_Read this in other languages:_ _[English](https://github.com/AureClai/stream-python/blob/master/README.en.md)_
 
 ## Qu'est ce que Stream ?
 
