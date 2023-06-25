@@ -5,7 +5,7 @@ import numpy as np
 import random
 
 
-def main_simulation_meso(S, T, disp='time'):
+def main_simulation_meso(S, T, disp='%'):
     print("Original simulation loop...")
 # S is the dict containing all the information about the simulation
 # nProcess is the number of the calculated process
@@ -73,18 +73,18 @@ def compute_next_action(Actions, ListActions=None, NextAction=None):
     return (ListActions, NextAction)
 
 
-def tackle_action(S, ListActions, NextAction, disp='time'):
+def tackle_action(S, ListActions, NextAction, disp='%'):
     # ...
     # we deals with actions
     # ...
     if NextAction['Type'] == 'display_time_simulation':
         if disp == 'time':
-            print('Time in simulation : ' +
+            print('Time : ' +
                   str(int(NextAction['Time'])) + ' sec')
         elif disp == '%':
             progress = max(0, 100 * (NextAction['Time'] - S['General']['SimulationDuration'][0]) /
                            (S['General']['SimulationDuration'][1] - S['General']['SimulationDuration'][0]))
-            print('%%%'+str(progress))
+            print(f"simulation,{progress}")
 
     # ...
     if NextAction['Type'] == 'managed_lane_activation':

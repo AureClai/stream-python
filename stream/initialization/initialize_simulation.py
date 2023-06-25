@@ -222,18 +222,22 @@ def initialize_actions(Simulation):
     # ...
     # Display times
     step_time = Simulation["General"]["TimesStepByDefault"]  # sec
-    if step_time != None and step_time > 0:
-        display_times = np.arange(Simulation["General"]["SimulationDuration"][0],
-                                  Simulation["General"]["SimulationDuration"][1] + 2 * step_time, step_time)
-        display_times = display_times - \
-            (Simulation["General"]["SimulationDuration"][0] % step_time)
-        for disp_time in display_times:
-            # ...
-            Action = {}
-            Action['Time'] = disp_time
-            Action['Type'] = 'display_time_simulation'
-            Action['Args'] = {}
-            Actions.append(Action)
+    if not(step_time != None and step_time > 0):
+        step_time = 60
+
+    print(f"Programming the display of progress every in simulation {step_time} seconds")
+    
+    display_times = np.arange(Simulation["General"]["SimulationDuration"][0],
+                                Simulation["General"]["SimulationDuration"][1] + 2 * step_time, step_time)
+    display_times = display_times - \
+        (Simulation["General"]["SimulationDuration"][0] % step_time)
+    for disp_time in display_times:
+        # ...
+        Action = {}
+        Action['Time'] = disp_time
+        Action['Type'] = 'display_time_simulation'
+        Action['Args'] = {}
+        Actions.append(Action)
     # ...
     # Loop for all the regulations
     for reg in list(Simulation["Regulations"]):

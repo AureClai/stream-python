@@ -5,6 +5,16 @@ import numpy as np
 
 # Return matrix and ID, num correspondance
 def getMatrix(sce): #scr = scenario dictionnary
+    """
+    This function generates a matrix and a dictionary of ID and number correspondence 
+    from a given scenario.
+
+    Parameters:
+    sce (dict): A dictionary containing a scenario.
+
+    Returns:
+    tuple: A tuple containing the cost matrix, correspondence dictionary, and inverse correspondence dictionary.
+    """
     # Loop over the nodes to initialize the matrix of Cost
     coresp = {}
     icoresp = {}
@@ -24,14 +34,46 @@ def getMatrix(sce): #scr = scenario dictionnary
     return (costMat, coresp, icoresp)
 
 def getGraph(matrix):
+    """
+    This function generates a compressed sparse row (CSR) matrix from a given matrix.
+
+    Parameters:
+    matrix (np.array): A numpy array.
+
+    Returns:
+    csr_matrix: A CSR matrix.
+    """
     return csr_matrix(matrix)
 
 def calculateShortestsPaths(matrix, method = 'D'):
+    """
+    This function calculates the shortest paths in the given matrix.
+
+    Parameters:
+    matrix (np.array): A numpy array.
+    method (str): The method to use for calculating the shortest paths. Default is 'D'.
+
+    Returns:
+    tuple: A tuple containing the distance and the predecessors matrix.
+    """
     # Calculate the distance and the predecessors matrix
     D, Pr = shortest_path(matrix, directed=True, method = method, return_predecessors=True)
     return (D, Pr)
 
 def getPathByOD(Pr, coresp, icoresp, entry, exit):
+    """
+    This function constructs the shortest path by exploring the predecessors matrix.
+
+    Parameters:
+    Pr (np.array): The predecessors matrix.
+    coresp (dict): The correspondence dictionary.
+    icoresp (dict): The inverse correspondence dictionary.
+    entry (int): The entry node.
+    exit (int): The exit node.
+
+    Returns:
+    list: A list containing the shortest path.
+    """
     # Exploring the predecessors matrix and construct the shortest path
     path = [exit]
     k = [coresp[exit]]
@@ -42,6 +84,15 @@ def getPathByOD(Pr, coresp, icoresp, entry, exit):
     return path[::-1]
 
 def getRoutes(sce):
+    """
+    This function generates routes from a given scenario.
+
+    Parameters:
+    sce (dict): A dictionary containing a scenario.
+
+    Returns:
+    dict: A dictionary containing the routes.
+    """
     matrix, coresp, icoresp = getMatrix(sce)
     D, Pr = calculateShortestsPaths(matrix)
     routes = {}
@@ -57,12 +108,33 @@ def getRoutes(sce):
     return routes
 
 def getPathByNodes(sce, node1, node2):
+    """
+    This function generates a path between two nodes from a given scenario.
+
+    Parameters:
+    sce (dict): A dictionary containing a scenario.
+    node1 (int): The first node.
+    node2 (int): The second node.
+
+    Returns:
+    list: A list containing the path.
+    """
     matrix, coresp, icoresp = getMatrix(sce)
     D, Pr = calculateShortestsPaths(matrix)
     path = getPathByOD(Pr, coresp, icoresp ,node1, node2)
     return path
 
 def __getLinkPath(nodePath, sce):
+    """
+    This function generates a link path from a given node path and scenario.
+
+    Parameters:
+    nodePath (list): A list containing the node path.
+    sce (dict): A dictionary containing a scenario.
+
+    Returns:
+    list: A list containing the link path.
+    """
     linksPath = []
     for i in range(len(nodePath) - 1):
         goodLink = -1
@@ -80,4 +152,14 @@ def __getLinkPath(nodePath, sce):
     return linksPath
 
 def getLinkPath(nodePath, sce):
+    """
+    This function returns the link path from a given node path and scenario.
+
+    Parameters:
+    nodePath (list): A list containing the node path.
+    sce (dict): A dictionary containing a scenario.
+
+    Returns:
+    list: A list containing the link path.
+    """
     return __getLinkPath(nodePath, sce)

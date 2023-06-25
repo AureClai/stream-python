@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>463</height>
+    <width>506</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
       <x>10</x>
       <y>10</y>
       <width>491</width>
-      <height>441</height>
+      <height>621</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -34,7 +34,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Fichier de configuration</string>
+        <string>Configuration file</string>
        </property>
       </widget>
      </item>
@@ -46,7 +46,7 @@
        <item>
         <widget class="QPushButton" name="inputFile_PB">
          <property name="text">
-          <string>Parcourir</string>
+          <string>Browse</string>
          </property>
         </widget>
        </item>
@@ -55,7 +55,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Dossier d'enregistrement des résultats</string>
+        <string>Folder to save results</string>
        </property>
       </widget>
      </item>
@@ -67,7 +67,7 @@
        <item>
         <widget class="QPushButton" name="outputDirectory_PB">
          <property name="text">
-          <string>Parcourir</string>
+          <string>Browse</string>
          </property>
         </widget>
        </item>
@@ -78,7 +78,7 @@
        <item>
         <widget class="QPushButton" name="launchSimulation_PB">
          <property name="text">
-          <string>Lancer la simulation</string>
+          <string>Start simulation</string>
          </property>
         </widget>
        </item>
@@ -88,11 +88,39 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Arrêter la simulation</string>
+          <string>Stop simulation</string>
          </property>
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Current task :</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="task_Label">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="simulation_progress">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QScrollArea" name="scrollArea">
@@ -105,7 +133,7 @@
           <x>0</x>
           <y>0</y>
           <width>487</width>
-          <height>306</height>
+          <height>360</height>
          </rect>
         </property>
         <widget class="QPlainTextEdit" name="logSimulation_TE">
@@ -113,8 +141,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>861</width>
-           <height>311</height>
+           <width>491</width>
+           <height>431</height>
           </rect>
          </property>
         </widget>

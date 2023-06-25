@@ -4,6 +4,16 @@ import numpy as np
 
 
 def assignment(Simulation, When='initialization'):
+    """
+    This function performs the assignment operation on the given simulation.
+
+    Parameters:
+    Simulation (dict): The simulation data.
+    When (str): A string denoting when the assignment is being performed. Default is 'initialization'.
+
+    Returns:
+    dict: The updated simulation data.
+    """
 
     print("Original assignment = shortest path...")
 
@@ -31,6 +41,18 @@ def assignment(Simulation, When='initialization'):
 
 
 def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
+    """
+    This function performs the first vehicle assignment.
+
+    Parameters:
+    Routes (dict): The routes data.
+    Demand (numpy.array): The demand data.
+    Periods (dict): The periods data.
+    Nodes (dict): The nodes data.
+
+    Returns:
+    tuple: A tuple containing the updated vehicles data and an array of vehicles.
+    """
     # init of array of route id - entryid - exitid
     routeArray = np.array([[routeID, Routes[routeID]["EntryID"],
                             Routes[routeID]["ExitID"]] for routeID in list(Routes.keys())])
@@ -97,6 +119,16 @@ def first_vehicle_assignment(Routes, Demand, Periods, Nodes):
 
 
 def validation_of_demand(demandArray, Routes):
+    """
+    This function validates the demand array.
+
+    Parameters:
+    demandArray (numpy.array): The demand array to be validated.
+    Routes (dict): The routes data.
+
+    Returns:
+    numpy.array: The validated demand array.
+    """
     # init of array of route id - entryid - exitid
     routeArray = np.array([[routeID, Routes[routeID]["EntryID"],
                             Routes[routeID]["ExitID"]] for routeID in list(Routes.keys())])
@@ -120,6 +152,15 @@ def validation_of_demand(demandArray, Routes):
 
 
 def findLineByCumProb(arr):
+    """
+    This function finds a line by cumulative probability.
+
+    Parameters:
+    arr (numpy.array): The array of probabilities.
+
+    Returns:
+    int: The index of the line found.
+    """
     # Make cum sum
     arr2 = np.cumsum(arr)
     # RNG
@@ -132,4 +173,15 @@ def findLineByCumProb(arr):
 
 
 def findLineCorrespondingToInOut(InOutArray, entry, exit):
+    """
+    This function finds a line corresponding to In/Out.
+
+    Parameters:
+    InOutArray (numpy.array): The array of In/Out data.
+    entry (int): The entry data.
+    exit (int): The exit data.
+
+    Returns:
+    numpy.array: The array of line corresponding to In/Out.
+    """
     return np.where(np.logical_and(InOutArray[:, 0] == entry, InOutArray[:, 1] == exit))[0]

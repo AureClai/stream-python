@@ -64,7 +64,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         while self.p.canReadLine():
             data += self.p.readLine()
         stdout = data.data().decode()
-        self.message(stdout)
+        splitted = stdout.split(',')
+        if splitted[0] == 'simulation':
+            self.simulation_progress.setValue(float(splitted[1]))
+            self.task_Label.setText('simulation')
+        else:
+            self.message(stdout)
 
     def handle_stderr(self):
         data = self.p.readAllStandardError()
@@ -83,9 +88,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if state == QProcess.ProcessState.NotRunning:
             self.stopSimulation_PB.setEnabled(False)
             self.launchSimulation_PB.setEnabled(True)
+            self.simulation_progress.setEnabled(False)
         else:
             self.stopSimulation_PB.setEnabled(True)
             self.launchSimulation_PB.setEnabled(False)
+            self.simulation_progress.setEnabled(True)
 
     
     def simulation_finished(self):
