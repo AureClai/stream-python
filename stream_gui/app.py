@@ -89,6 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.stopSimulation_PB.setEnabled(False)
             self.launchSimulation_PB.setEnabled(True)
             self.simulation_progress.setEnabled(False)
+            self.simulation_progress.setValue(0)
         else:
             self.stopSimulation_PB.setEnabled(True)
             self.launchSimulation_PB.setEnabled(False)
