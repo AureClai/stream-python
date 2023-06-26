@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="stream",
-    version="3.2.2",
+    version="3.2.3",
     author="CEREMA",
     author_email="aurelien.clairais@cerema.fr",
     description="A mesoscopic event-base open-source traffic simulation tool",
