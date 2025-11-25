@@ -365,7 +365,7 @@ def complete_nodes(Links, Nodes, Traffic):
 
     for node in Nodes.keys():
         # (a) Type
-        if not("Type" in Nodes[node].keys()):
+        if not("Type" in Nodes[node].keys()) or Nodes[node]["Type"] == []:
             if len(Nodes[node]["IncomingLinksID"]) == 0:
                 Nodes[node]["Type"] = 1  # Entry
             elif len(Nodes[node]["OutgoingLinksID"]) == 0:
@@ -590,7 +590,7 @@ def validation(Links, Nodes, Entries, Exits, warning="print"):
     for node in list(Nodes.keys()):
         # An entry nodes must have 0 upstream link and 1 link downstream
         if Nodes[node]["Type"] == 1:
-            if Nodes[node]["IncomingLinksID"]:
+            if len(Nodes[node]["IncomingLinksID"]) > 0:
                 if warning == "print":
                     print("The node " + str(node) +
                           " is an entry node : it cannot have an upstream link.")
@@ -607,7 +607,7 @@ def validation(Links, Nodes, Entries, Exits, warning="print"):
 
         # An exit node must have 1 upstream link and 0 downstream link
         elif Nodes[node]["Type"] == 2:
-            if Nodes[node]["OutgoingLinksID"]:
+            if len(Nodes[node]["OutgoingLinksID"]) > 0:
                 if warning == "print":
                     print("The node " + str(node) +
                           " is an exit node : it cannot have a downstream link.")

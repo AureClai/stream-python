@@ -26,6 +26,19 @@ As vantagens desse método de resolução são: (i) tempos de cálculo reduzidos
 - Gerenciamento de faixas específicas (faixas reservadas e auxiliares)
 - Regulação dinâmica durante a simulação
 
+## Comparação Núcleo Legacy vs Rust
+
+O motor de simulação foi migrado de Python para Rust para obter alto desempenho e melhor escalabilidade.
+
+| Recurso | Núcleo Python Legacy | Novo Núcleo Rust |
+| :--- | :--- | :--- |
+| **Velocidade** | Referência | **75x - 235x Mais rápido** |
+| **Agendamento** | $O(N_{nós})$ Varredura Linear | $O(\log N)$ Heap Binário |
+| **Divergência** | Bloqueio FIFO (engarrafamentos) | **Look-Ahead** (Roteamento inteligente) |
+| **Física** | Ondas Cinemáticas | Ondas Cinemáticas (Idêntico) |
+
+Veja [BENCHMARK.md](BENCHMARK.md) para um relatório científico detalhado.
+
 ## Contato
 
 A principal contribuição é feita pelo Departamento Leste-Central do Cerema. Se você tiver alguma dúvida, envie um e-mail para o seguinte endereço: aurelien.clairais@cerema.fr

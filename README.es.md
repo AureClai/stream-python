@@ -25,6 +25,19 @@ Stream es una herramienta de simulación de tráfico mesoscópica, es decir, una
 - Gestión de carriles específicos (carriles reservados y auxiliares)
 - Regulación dinámica durante la simulación
 
+## Comparación Núcleo Legacy vs Rust
+
+El motor de simulación ha sido migrado de Python a Rust para lograr un alto rendimiento y una mejor escalabilidad.
+
+| Característica | Núcleo Python Legacy | Nuevo Núcleo Rust |
+| :--- | :--- | :--- |
+| **Velocidad** | Referencia | **75x - 235x Más rápido** |
+| **Programación** | $O(N_{nodos})$ Escaneo Lineal | $O(\log N)$ Montículo Binario |
+| **Divergencia** | Bloqueo FIFO (atascos) | **Look-Ahead** (Enrutamiento inteligente) |
+| **Física** | Ondas Cinemáticas | Ondas Cinemáticas (Idéntico) |
+
+Ver [BENCHMARK.md](BENCHMARK.md) para un informe científico detallado.
+
 ## Contacto
 
 La principal contribución ha sido realizada por la Dirección Departamental del Centro Este de Cerema. En caso de preguntas, envíe un correo electrónico a la siguiente dirección: aurelien.clairais@cerema.fr

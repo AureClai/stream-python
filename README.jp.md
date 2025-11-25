@@ -26,6 +26,19 @@ Streamは中程度の交通シミュレーションツールです。つまり�
 - 特定の車線の管理（予約および補助車線）
 - シミュレーション中の動的な規制
 
+## Legacy vs Rust コア比較
+
+コア・シミュレーション・エンジンは、高性能とスケーラビリティを実現するためにPythonからRustに移行されました。
+
+| Feature | Legacy Python Core | New Rust Core |
+| :--- | :--- | :--- |
+| **Speed** | Baseline | **75x - 235x Faster** |
+| **Event Scheduling** | $O(N_{nodes})$ Linear Scan | $O(\log N)$ Binary Heap |
+| **Diverge Behavior** | FIFO Blocking (can jam) | **Look-Ahead** (Smart routing) |
+| **Physics** | Kinematic Wave | Kinematic Wave (Identical) |
+
+See [BENCHMARK.md](BENCHMARK.md) for a detailed scientific report and validation results.
+
 ## 連絡先
 
 主な貢献者はCerema東中央部です。ご質問がある場合は、次のアドレスにメールを送信してください：aurelien.clairais@cerema.fr

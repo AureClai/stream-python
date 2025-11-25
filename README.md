@@ -2,6 +2,7 @@ _[:us:](https://github.com/AureClai/stream-python/blob/master/README.md)_ _[:fr:
 _[:jp:](https://github.com/AureClai/stream-python/blob/master/README.jp.md)_ _[:portugal:](https://github.com/AureClai/stream-python/blob/master/README.pt.md)_
 
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+[![forthebadge made-with-rust](https://img.shields.io/badge/Made%20with-Rust-black?logo=rust)](https://www.rust-lang.org/)
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/Naereen/badges/)
 [![Join the chat at https://gitter.im/FaradayRF/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/stream-python/community)
 
@@ -18,47 +19,54 @@ The advantages of this resolution method are (i) reduced computing times compare
 
 ## Main Features
 
+- **High-Performance Rust Core** (New! >250x speedup)
 - Event-based mesoscopic calculation core
 - Upstream and shortest path **static** assignment
-- Limited management * of different vehicle classes
+- Limited management \* of different vehicle classes
 - Complex node management
 - Traffic light intersection management
 - Specific lane management (reserved and auxiliary lanes)
 - Dynamic regulation during simulation
 
+## Legacy vs Rust Core
+
+The core simulation engine has been migrated from Python to Rust to achieve high performance and better scalability.
+
+| Feature              | Legacy Python Core         | New Rust Core                  |
+| :------------------- | :------------------------- | :----------------------------- |
+| **Speed**            | Baseline                   | **75x - 235x Faster**          |
+| **Event Scheduling** | $O(N_{nodes})$ Linear Scan | $O(\log N)$ Binary Heap        |
+| **Diverge Behavior** | FIFO Blocking (can jam)    | **Look-Ahead** (Smart routing) |
+| **Physics**          | Kinematic Wave             | Kinematic Wave (Identical)     |
+
+See [BENCHMARK.md](BENCHMARK.md) for a detailed scientific report and validation results.
+
 ## Contact
 
-The main contribution is made by the Cerema East-Central Department. If you have any questions, please send an email to the following address: aurelien.clairais@cerema.fr
+The main contribution is made by Aurélien Clairais when working at Cerema East-Central Department. It then has become a personnal project. If you have any questions, please send an email to the following address: aureclai.dev@gmail.com.
 
 ## Installation
 
-Stream works under [Anaconda](https://www.anaconda.com/distribution/) for Python 3.9.
-With Anaconda, the use of [virtual environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) is recommended:
+Stream works under [Anaconda](https://www.anaconda.com/distribution/) for Python 3.9+.
+It requires a Rust compiler for the core simulation engine.
+
+1. **Install Rust**: [https://rustup.rs/](https://rustup.rs/)
+2. **Create Environment**:
 
 ```console
-$ conda create --name myenv
-$ conda activate myenv
+$ conda create --name stream
+$ conda activate stream
+$ pip install maturin
 ```
 
-The installation is done via cloning the directory followed by installing the package with `pip`.
-
-### 1. Clone the Directory
+3. **Clone and Install**:
 
 ```console
 $ git clone https://github.com/AureClai/stream-python
 $ cd stream-python
-```
-
-### 2. _(optional)_ Switch Branch (if developing on a branch other than _master_)
-
-```console
-$ git checkout the_branch
-```
-
-### 3. Install
-
-```console
 $ pip install .
+$ cd stream_rust
+$ maturin develop --release
 ```
 
 ## Usage

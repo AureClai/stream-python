@@ -26,6 +26,19 @@ Les avantages de cette méthode de résolution sont (i) les temps de calculs amo
 - Gestion des voies spécifiques (voies réservées et auxiliaires)
 - Régulation dynamique en cours de simulation
 
+## Comparaison Coeur Legacy vs Rust
+
+Le moteur de simulation a été migré de Python vers Rust pour atteindre de hautes performances et une meilleure scalabilité.
+
+| Fonctionnalité | Coeur Python Legacy | Nouveau Coeur Rust |
+| :--- | :--- | :--- |
+| **Vitesse** | Référence | **75x - 235x Plus rapide** |
+| **Ordonnancement** | $O(N_{noeuds})$ Balayage Linéaire | $O(\log N)$ Tas Binaire |
+| **Divergence** | Blocage FIFO (bouchons) | **Look-Ahead** (Routage intelligent) |
+| **Physique** | Ondes Cinématiques | Ondes Cinématiques (Identique) |
+
+Voir [BENCHMARK.md](BENCHMARK.md) pour un rapport scientifique détaillé.
+
 ## Contact
 
 La principale contribution est réalisée par la Direction Départemental Centre-Est du Cerema. En cas de question, veuillez envoyer un mail à l'adresse suivante :

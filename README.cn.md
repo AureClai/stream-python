@@ -25,6 +25,19 @@ Stream是一种中观交通流模拟工具，即分辨率介于微观和宏观�
 - 特定车道管理（预留和辅助车道）
 - 模拟过程中的动态调控
 
+## Legacy vs Rust 核心对比
+
+核心仿真引擎已从 Python 迁移到 Rust，以实现高性能和更好的扩展性。
+
+| Feature | Legacy Python Core | New Rust Core |
+| :--- | :--- | :--- |
+| **Speed** | Baseline | **75x - 235x Faster** |
+| **Event Scheduling** | $O(N_{nodes})$ Linear Scan | $O(\log N)$ Binary Heap |
+| **Diverge Behavior** | FIFO Blocking (can jam) | **Look-Ahead** (Smart routing) |
+| **Physics** | Kinematic Wave | Kinematic Wave (Identical) |
+
+See [BENCHMARK.md](BENCHMARK.md) for a detailed scientific report and validation results.
+
 ## 联系方式
 
 主要贡献者为Cerema的东部地区部门。如有问题，请发送邮件至以下地址：aurelien.clairais@cerema.fr

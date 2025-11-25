@@ -1,8 +1,7 @@
+import random
+import numpy as np
 import os
 os.environ['NUMPY_EXPERIMENTAL_ARRAY_FUNCTION'] = '0'
-import numpy as np
-
-import random
 
 
 def main_simulation_meso(S, T, disp='%'):
@@ -146,15 +145,19 @@ def tackle_action(S, ListActions, NextAction, disp='%'):
         # Keep track of changes
         if 'Changes' not in S['Links'][concerned_link]:
             S['Links'][concerned_link]['Changes'] = {
-                'Speed' : {'Times' : [], 'Values' : []},
-                'Capacity' : {'Times' : [], 'Values' : []}
+                'Speed': {'Times': [], 'Values': []},
+                'Capacity': {'Times': [], 'Values': []}
             }
         S['Links'][concerned_link]['Speed'] = Args['Speed']
         S['Links'][concerned_link]['Capacity'] = Args['Capacity']
-        S['Links'][concerned_link]['Changes']['Speed']['Times'].append(NextAction['Time'])
-        S['Links'][concerned_link]['Changes']['Capacity']['Times'].append(NextAction['Time'])
-        S['Links'][concerned_link]['Changes']['Speed']['Values'].append(Args['Speed'])
-        S['Links'][concerned_link]['Changes']['Capacity']['Values'].append(Args['Capacity'])
+        S['Links'][concerned_link]['Changes']['Speed']['Times'].append(
+            NextAction['Time'])
+        S['Links'][concerned_link]['Changes']['Capacity']['Times'].append(
+            NextAction['Time'])
+        S['Links'][concerned_link]['Changes']['Speed']['Values'].append(
+            Args['Speed'])
+        S['Links'][concerned_link]['Changes']['Capacity']['Values'].append(
+            Args['Capacity'])
         # ...
         if NextAction['Args']['Display']:
             print(
@@ -202,7 +205,7 @@ def tackle_vehicle_event(S, ListEvents, NextEvent):
                   ]["CurrentNode"] = S["Vehicles"][NextEvent["VehID"]]["CurrentNode"] + 1
     S["Vehicles"][NextEvent["VehID"]]["NodeTimes"][S["Vehicles"]
                                                    [NextEvent["VehID"]]["CurrentNode"]] = NextEvent["Time"]
-    if S["Nodes"][NextEvent["Node"]]["Type"] != 2:
+    if S["Nodes"][NextEvent["Node"]]["Type"] != 2 and NextEvent["NextLink"] < len(S["Nodes"][NextEvent["Node"]]["OutgoingLinksID"]):
         S["Vehicles"][NextEvent["VehID"]]["RealPath"].append(
             S["Nodes"][NextEvent["Node"]]["OutgoingLinksID"][NextEvent["NextLink"]])
 
@@ -232,7 +235,7 @@ def tackle_vehicle_event(S, ListEvents, NextEvent):
 def compute_next_event(General, Links, Nodes, Actions, Events, Signals, ListEvents=None, NextEvent=None):
 
     # Update of ListEvents : Event time at current node and Nodes immediatly downstream have to be updated
-    if not(ListEvents) and not(NextEvent):
+    if not (ListEvents) and not (NextEvent):
         # Initialisation of Event in main_simulation_meso*
         NextEvent = {}
         NodesToUpdate = list(Events.keys())
@@ -241,9 +244,11 @@ def compute_next_event(General, Links, Nodes, Actions, Events, Signals, ListEven
         # Update of Events in main_simulation_meso
         NodeID = NextEvent["Node"]
         NodeDownID = [Links[linkID]["NodeDownID"]
-                      for linkID in Nodes[NodeID]["OutgoingLinksID"]]  # Nodes Downstream
+                      # Nodes Downstream
+                      for linkID in Nodes[NodeID]["OutgoingLinksID"]]
         NodeUpID = [Links[linkID]["NodeUpID"]
-                    for linkID in Nodes[NodeID]["IncomingLinksID"]]  # Nodes Upstream
+                    # Nodes Upstream
+                    for linkID in Nodes[NodeID]["IncomingLinksID"]]
         _uptimes = np.array([ListEvents[nodeup]["Time"]
                              for nodeup in NodeUpID])
         if len(np.where(_uptimes == np.inf)[0]) > 0:
@@ -374,8 +379,9 @@ def next_passage_time(Nodes, NodeID, NextArrivals, NextSupplyTimes, Signals):
             # --- maximum between demand and supplies (un and down)
             # effective out, independant from FIFO or not
             out_eff = int(NextArrivals["LinkIndex"][IN, out])
-            NextPassageTime[IN, out] = max([NextArrivals["Time"][IN, out], NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff]])
-            #np.max(np.hstack((np.array(
+            NextPassageTime[IN, out] = max(
+                [NextArrivals["Time"][IN, out], NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff]])
+            # np.max(np.hstack((np.array(
             #    NextArrivals["Time"][IN, out]), NextSupplyTimes["Up"][IN], NextSupplyTimes["Down"][out_eff])))
 
             # -- Effect of traffic signal
@@ -419,7 +425,7 @@ def select_next_event(Nodes, NodeID, General, NextArrivals, NextPassageTime, Nex
 
     if len(inNext) > 1:
         # there is a conflict
-        if not(np.prod(1 - NextRegime[inNext, outNext]) == 0):
+        if not (np.prod(1 - NextRegime[inNext, outNext]) == 0):
             # all vehicles are free : they only reaches the node in the same time
             # the vehicle from the most priority link passes
             priority = np.argmax(Nodes[NodeID]["AlphaOD"][inNext])
@@ -547,7 +553,7 @@ def execute_and_update_event(Links, Exits, Nodes, General, Vehicles, VehicleClas
     # Update of the 'Arrivals' at the node Downstream
     # The vehicles are added to the list of the arrival at the node downstream
     # Ajout du véhicule dans la liste des arrivés au noeud en aval
-    if Nodes[NodeID]["NumOutgoingLinks"] > 0 and Nodes[NodeID]["NumOutgoingLinks"] >= out:
+    if Nodes[NodeID]["NumOutgoingLinks"] > 0 and Nodes[NodeID]["NumOutgoingLinks"] > out:
         # this is an internal node
         # -- transit time at the previous node
         transit_time = Nodes[NodeID]["TransitTime"]
@@ -622,7 +628,16 @@ def execute_and_update_event(Links, Exits, Nodes, General, Vehicles, VehicleClas
         dt_exact = dt + \
             (dn_exact*General["Peloton"]-dn) * (1*Links[LinkUpID]["FD"]["C"])
         Event_NodeUpID = Events[NodeUpID]
-        Event_NodeUpID["SupplyTimes"]["Downstream"][n +
+
+        # Fix: Resize array if needed
+        n_scalar = n[0]
+        sp = Event_NodeUpID["SupplyTimes"]["Downstream"].shape
+        if n_scalar + dn_exact >= sp[0]:
+            nbLinesToAdd = int(n_scalar + dn_exact - sp[0] + 1)
+            Event_NodeUpID["SupplyTimes"]["Downstream"] = np.vstack(
+                (Event_NodeUpID["SupplyTimes"]["Downstream"], -np.inf * np.ones((nbLinesToAdd, sp[1]))))
+
+        Event_NodeUpID["SupplyTimes"]["Downstream"][n_scalar +
                                                     dn_exact, j] = current_time + dt_exact
     else:
         NodeUpID = []

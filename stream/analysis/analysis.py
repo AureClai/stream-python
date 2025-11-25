@@ -234,13 +234,14 @@ def compute_travel_times_on_path( Simulation, Path ):
         (boolean_path_included, ind_beg, ind_end) = is_a_path_included_in_the_vehicle_path( VehiclePath, Path )
         if boolean_path_included:
             NodeTimes = Simulation['Vehicles'][veh]['NodeTimes']
-            DT = NodeTimes[ind_beg]
-            AT = NodeTimes[ind_end]
-            TT = AT - DT
-            if TT > 0:
-                iclass = Simulation['Vehicles'][veh]['VehicleClass']
-                PathTravelTimes[iclass]['DepartureTime'].append(DT)
-                PathTravelTimes[iclass]['TravelTime'].append(TT)
+            if ind_end < len(NodeTimes):
+                DT = NodeTimes[ind_beg]
+                AT = NodeTimes[ind_end]
+                TT = AT - DT
+                if TT > 0:
+                    iclass = Simulation['Vehicles'][veh]['VehicleClass']
+                    PathTravelTimes[iclass]['DepartureTime'].append(DT)
+                    PathTravelTimes[iclass]['TravelTime'].append(TT)
     # ...
     # ordering
     for iclass in list(Simulation['VehicleClass']):
