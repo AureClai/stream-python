@@ -346,9 +346,15 @@ def complete_nodes(Links, Nodes, Traffic):
 #            Message = "Boundary nodes must be associated to Entry and Exits ids."
 #            raise BaseException("Message")
         if not("NumIncomingLinks" in Nodes[node].keys()):
-            Nodes[node]["NumIncomingLinks"] = []
+            if "IncomingLinksID" in Nodes[node]:
+                Nodes[node]["NumIncomingLinks"] = len(Nodes[node]["IncomingLinksID"])
+            else:
+                Nodes[node]["NumIncomingLinks"] = 0
         if not("NumOutgoingLinks" in Nodes[node].keys()):
-            Nodes[node]["NumOutgoingLinks"] = []
+            if "OutgoingLinksID" in Nodes[node]:
+                Nodes[node]["NumOutgoingLinks"] = len(Nodes[node]["OutgoingLinksID"])
+            else:
+                Nodes[node]["NumOutgoingLinks"] = 0
         if not("AlphaOD" in Nodes[node].keys()):
             Nodes[node]["AlphaOD"] = []
         if not("FIFO" in Nodes[node].keys()):
